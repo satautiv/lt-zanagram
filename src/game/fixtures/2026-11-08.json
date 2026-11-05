@@ -1,0 +1,130 @@
+{
+  "id": "2026-11-08",
+  "size": 4,
+  "letters": ["A", "S", "I", "K", "R", "N", "A", "L", "I", "O", "Y", "R", "N", "I", "G", "E"],
+  "bridges": [
+    [0, 1],
+    [0, 4],
+    [0, 5],
+    [1, 2],
+    [1, 6],
+    [2, 3],
+    [2, 5],
+    [2, 6],
+    [2, 7],
+    [3, 6],
+    [4, 9],
+    [5, 8],
+    [5, 10],
+    [6, 11],
+    [7, 10],
+    [8, 12],
+    [9, 12],
+    [9, 13],
+    [10, 11],
+    [10, 14],
+    [11, 14],
+    [11, 15],
+    [13, 14],
+    [14, 15]
+  ],
+  "words": [
+    {
+      "word": "REGIONINIS",
+      "path": [11, 15, 14, 13, 9, 12, 8, 5, 2, 1],
+      "definition": "Susijęs su tam tikru kraštu ar regionu."
+    },
+    {
+      "word": "GYLIS",
+      "path": [14, 10, 7, 2, 1],
+      "definition": "Atstumas nuo paviršiaus iki dugno."
+    },
+    {
+      "word": "LINAS",
+      "path": [7, 2, 5, 0, 1],
+      "definition": "Augalas, iš kurio pluošto audžiami audiniai."
+    },
+    {
+      "word": "KAINA",
+      "path": [3, 6, 2, 5, 0],
+      "definition": "Pinigų suma, kurią reikia sumokėti už prekę."
+    },
+    {
+      "word": "NORAS",
+      "path": [12, 9, 4, 0, 1],
+      "definition": "Siekis ką nors turėti ar padaryti."
+    },
+    {
+      "word": "GERAS",
+      "path": [14, 15, 11, 6, 1],
+      "definition": "Turintis teigiamų savybių, ne blogas."
+    },
+    {
+      "word": "KINAS",
+      "path": [3, 2, 5, 0, 1],
+      "definition": "Filmų menas arba vieta, kur jie rodomi."
+    },
+    {
+      "word": "AKIS",
+      "path": [6, 3, 2, 1],
+      "definition": "Regėjimo organas."
+    },
+    {
+      "word": "GRYNAS",
+      "path": [14, 11, 10, 5, 0, 1],
+      "definition": "Be priemaišų, švarus, tikras."
+    }
+  ],
+  "extras": [
+    "AINI",
+    "AKINA",
+    "ARGI",
+    "ASAI",
+    "ERAI",
+    "ERAS",
+    "GERA",
+    "GERAI",
+    "GERAIS",
+    "GRASA",
+    "GRASI",
+    "GRASINA",
+    "GRASINI",
+    "GRYNA",
+    "GRYNI",
+    "GRYNINO",
+    "GRYNIS",
+    "KAINAS",
+    "KAIS",
+    "KARE",
+    "KARY",
+    "KASA",
+    "KASI",
+    "KINI",
+    "LYGI",
+    "LYGIO",
+    "LYNAS",
+    "LYRA",
+    "LYRAI",
+    "LYRAS",
+    "NARO",
+    "NYRA",
+    "ORAS",
+    "RAINA",
+    "RAINAS",
+    "RAINI",
+    "RAINY",
+    "RAKI",
+    "RAKINA",
+    "RASA",
+    "RASAI",
+    "RASI",
+    "REGI",
+    "SAKI",
+    "SAKINY",
+    "SARGE",
+    "SARGI"
+  ],
+  "difficulty": 1,
+  "author": "Vytautas",
+  "version": 1
+}
