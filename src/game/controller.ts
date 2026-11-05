@@ -28,7 +28,7 @@ export interface ControllerOptions {
 export class GameController {
   state: GameState;
   private path: TileIndex[] = [];
-  private visible: Visibility;
+  private onBoard: Visibility;
 
   constructor(
     readonly puzzle: Puzzle,
@@ -38,7 +38,7 @@ export class GameController {
     initial: GameState = newGame(puzzle),
   ) {
     this.state = initial;
-    this.visible = visibility(puzzle, initial);
+    this.onBoard = visibility(puzzle, initial);
     this.render();
   }
 
@@ -50,8 +50,13 @@ export class GameController {
     return this.state.status === 'playing';
   }
 
+  /** Tiles and bridges still on the board. */
+  get visible(): Visibility {
+    return this.onBoard;
+  }
+
   isVisible(tile: TileIndex): boolean {
-    return this.visible.tiles.has(tile);
+    return this.onBoard.tiles.has(tile);
   }
 
   /** True if the tile can be appended to the current path. */
@@ -61,7 +66,7 @@ export class GameController {
       last !== undefined &&
       this.isVisible(tile) &&
       !this.path.includes(tile) &&
-      this.visible.bridges.has(bridgeKey(last, tile))
+      this.onBoard.bridges.has(bridgeKey(last, tile))
     );
   }
 
@@ -100,7 +105,7 @@ export class GameController {
     }
     const { state, result } = submit(this.puzzle, this.state, path);
     this.state = state;
-    this.visible = visibility(this.puzzle, state);
+    this.onBoard = visibility(this.puzzle, state);
     this.feedback(result, path);
     this.path = [];
     this.render();
@@ -154,8 +159,8 @@ export class GameController {
 
   private renderBoard(): void {
     this.board.update({
-      visibleTiles: this.visible.tiles,
-      visibleBridges: this.visible.bridges,
+      visibleTiles: this.onBoard.tiles,
+      visibleBridges: this.onBoard.bridges,
       selected: this.path,
       hinted: [],
     });
