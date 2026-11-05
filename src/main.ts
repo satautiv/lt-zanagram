@@ -6,6 +6,7 @@ import { BoardView } from './game/board-view';
 import { GameController } from './game/controller';
 import { attachPointerInput } from './game/pointer-input';
 import { FIXTURES } from './game/fixtures';
+import { attachKeyboardInput } from './game/keyboard-input';
 import { StatusLine } from './game/status-line';
 
 const app = document.querySelector<HTMLElement>('#app')!;
@@ -15,5 +16,6 @@ const status = new StatusLine();
 const board = new BoardView(puzzle);
 const game = new GameController(puzzle, board, status);
 attachPointerInput(board, game);
+attachKeyboardInput(game);
 
 app.append(status.element, board.svg);
