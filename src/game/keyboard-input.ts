@@ -18,7 +18,10 @@ function samePath(a: readonly TileIndex[], b: readonly TileIndex[]): boolean {
  * search falls back to diacritics for English layouts. Backspace, Enter and Escape edit, submit
  * and clear.
  */
-export function attachKeyboardInput(game: GameController, target: Window = window): () => void {
+export function attachKeyboardInput(
+  game: GameController,
+  { target = window, paused = () => false }: { target?: Window; paused?: () => boolean } = {},
+): () => void {
   let search: TypingSearch = emptySearch();
   let shown: readonly TileIndex[] = [];
 
@@ -28,7 +31,7 @@ export function attachKeyboardInput(game: GameController, target: Window = windo
   };
 
   const keydown = (event: KeyboardEvent) => {
-    if (!game.playing || event.ctrlKey || event.metaKey || event.altKey) return;
+    if (!game.playing || paused() || event.ctrlKey || event.metaKey || event.altKey) return;
     if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
       return;
     }
