@@ -3,3 +3,4 @@ export * from './plural';
 export * from './i18n';
 export * from './board';
 export * from './puzzle';
+export * from './game';
