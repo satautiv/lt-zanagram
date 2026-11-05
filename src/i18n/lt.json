@@ -54,5 +54,10 @@
   "giveUp.question": "Ar tikrai norite pasiduoti? Bus parodyti visi likę žodžiai.",
   "giveUp.confirm": "Taip, pasiduoti",
   "giveUp.cancel": "Atšaukti",
-  "toolbar.timer": "Laikas"
+  "toolbar.timer": "Laikas",
+  "settings.title": "Nustatymai",
+  "settings.darkMode": "Tamsi tema",
+  "settings.showTimer": "Rodyti laikmatį",
+  "settings.feedback": "Pagyrimo žinutės",
+  "settings.back": "Atgal"
 }

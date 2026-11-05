@@ -51,7 +51,7 @@ export class Toolbar {
     this.timer.className = 'timer';
     this.timer.setAttribute('aria-label', t('toolbar.timer'));
     this.timer.setAttribute('role', 'timer');
-    // Hidden by default; the settings ticket adds the "Rodyti laikmatį" toggle.
+    // Hidden by default ("Rodyti laikmatį" is off).
     this.timer.hidden = true;
     left.append(menu, this.timer);
 
