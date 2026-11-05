@@ -35,5 +35,12 @@
   "results.gaveUp": "Pasidavėte",
   "results.todaysWords": "Šios dienos žodžiai",
   "results.extras": "Papildomi žodžiai",
-  "results.noExtras": "Papildomų žodžių nerasta"
+  "results.noExtras": "Papildomų žodžių nerasta",
+  "toolbar.hint": "Patarimas",
+  "toolbar.hintsLeft": {
+    "one": "Liko {n} patarimas",
+    "few": "Liko {n} patarimai",
+    "many": "Liko {n} patarimų"
+  },
+  "toolbar.rotate": "Pasukti lentą"
 }

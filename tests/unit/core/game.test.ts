@@ -5,6 +5,7 @@ import {
   displayTime,
   giveUp,
   newGame,
+  rotate,
   setElapsed,
   submit,
   unfoundWords,
@@ -189,5 +190,19 @@ describe('give up', () => {
     const p = board();
     const state = play(p, [0, 3, 6, 7], [2, 5, 4, 7]);
     expect(JSON.parse(JSON.stringify(state))).toEqual(state);
+  });
+});
+
+describe('rotate', () => {
+  it('turns a quarter clockwise and wraps after four turns', () => {
+    const p = board();
+    let state = newGame(p);
+    expect(state.rotation).toBe(0);
+    const seen: number[] = [];
+    for (let i = 0; i < 5; i++) {
+      state = rotate(state);
+      seen.push(state.rotation);
+    }
+    expect(seen).toEqual([1, 2, 3, 0, 1]);
   });
 });

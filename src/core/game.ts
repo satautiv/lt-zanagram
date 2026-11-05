@@ -26,6 +26,8 @@ export interface GameState {
   hintRevealed: number;
   /** Raw elapsed play time; the adjusted time subtracts the extra-word bonuses. */
   elapsedMs: number;
+  /** Quarter turns clockwise, 0–3. Purely visual; remembered per puzzle (spec §5 Rotate). */
+  rotation: number;
   status: GameStatus;
 }
 
@@ -56,6 +58,7 @@ export function newGame(puzzle: Puzzle): GameState {
     hintTarget: null,
     hintRevealed: 0,
     elapsedMs: 0,
+    rotation: 0,
     status: 'playing',
   };
 }
@@ -159,6 +162,11 @@ export function submit(
 /** Ends the puzzle as given up; the remaining words are revealed by `unfoundWords`. */
 export function giveUp(state: GameState): GameState {
   return state.status === 'playing' ? { ...state, status: 'gaveUp' } : state;
+}
+
+/** Turns the board a quarter turn clockwise. Tile indices never change. */
+export function rotate(state: GameState): GameState {
+  return { ...state, rotation: (state.rotation + 1) % 4 };
 }
 
 /** Records play time; the timer itself lives outside the core. */

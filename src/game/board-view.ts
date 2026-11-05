@@ -43,6 +43,8 @@ export class BoardView {
   private readonly tiles: SVGGElement[] = [];
   private readonly tileLayer: SVGGElement;
   private readonly bridges = new Map<string, SVGLineElement>();
+  private readonly letters: SVGTextElement[] = [];
+  private readonly rotor: SVGGElement;
 
   constructor(puzzle: Puzzle) {
     this.size = puzzle.size;
@@ -83,10 +85,13 @@ export class BoardView {
       inner.append(text);
       outer.append(inner);
       this.tiles.push(inner);
+      this.letters.push(text);
       tileLayer.append(outer);
     });
 
-    this.svg.append(bridgeLayer, tileLayer);
+    this.rotor = el('g', { class: 'rotor' });
+    this.rotor.append(bridgeLayer, tileLayer);
+    this.svg.append(this.rotor);
   }
 
   /** Width and height of the board in SVG units. */
@@ -132,6 +137,16 @@ export class BoardView {
         once: true,
       });
     }
+  }
+
+  /**
+   * Shows the board turned by a number of quarter turns clockwise. Letters counter-rotate so they
+   * stay upright; logic indices never change. `turns` may keep growing so each turn animates
+   * clockwise.
+   */
+  setRotation(turns: number): void {
+    this.rotor.style.transform = `rotate(${turns * 90}deg)`;
+    for (const letter of this.letters) letter.style.transform = `rotate(${-turns * 90}deg)`;
   }
 
   update(state: BoardViewState): void {
