@@ -188,6 +188,11 @@ export class GameController {
     }
   }
 
+  /** The current state with the play time brought up to date, for saving. */
+  snapshot(): GameState {
+    return this.timed();
+  }
+
   private timed(): GameState {
     const elapsed = this.options.elapsedMs?.();
     return elapsed === undefined ? this.state : setElapsed(this.state, elapsed);
