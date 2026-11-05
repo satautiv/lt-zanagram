@@ -10,7 +10,8 @@
     "test:watch": "vitest",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "puzzle:show": "tsx tools/puzzle-show.ts"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,7 @@
     "eslint": "^10.14.0",
     "globals": "^17.14.0",
     "prettier": "^3.9.10",
+    "tsx": "^4.23.15",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.72.1",
     "vite": "^6.4.5",
