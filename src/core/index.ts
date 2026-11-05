@@ -10,3 +10,4 @@ export * from './obfuscate';
 export * from './words';
 export * from './clock';
 export * from './calendar';
+export * from './stats';

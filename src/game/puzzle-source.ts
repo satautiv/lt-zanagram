@@ -28,15 +28,18 @@ export async function fetchPuzzle(date: string): Promise<Puzzle> {
   return puzzle;
 }
 
-/** Today's puzzle, or the latest available one (spec §9). `isDaily` is false for the fallback. */
-export async function loadDailyPuzzle(
-  today: string,
-): Promise<{ puzzle: Puzzle; isDaily: boolean }> {
-  const index = await fetchIndex();
-  const date = pickPuzzleDate(
-    index.map((e) => e.date),
-    today,
-  );
+export interface DailyPuzzle {
+  puzzle: Puzzle;
+  /** False when today has no puzzle and the latest available one is shown instead. */
+  isDaily: boolean;
+  /** Every published date, for the streak's puzzle days. */
+  published: string[];
+}
+
+/** Today's puzzle, or the latest available one (spec §9). */
+export async function loadDailyPuzzle(today: string): Promise<DailyPuzzle> {
+  const published = (await fetchIndex()).map((e) => e.date);
+  const date = pickPuzzleDate(published, today);
   if (date === null) throw new Error('No puzzles published');
-  return { puzzle: await fetchPuzzle(date), isDaily: date === today };
+  return { puzzle: await fetchPuzzle(date), isDaily: date === today, published };
 }

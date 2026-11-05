@@ -61,5 +61,8 @@
   "settings.feedback": "Pagyrimo žinutės",
   "settings.back": "Atgal",
   "load.error": "Nepavyko įkelti galvosūkio. Patikrinkite ryšį ir bandykite dar kartą.",
-  "load.retry": "Bandyti dar kartą"
+  "load.retry": "Bandyti dar kartą",
+  "stats.played": "Sužaista",
+  "stats.streak": "Serija",
+  "stats.solves": "Išspręsta"
 }
