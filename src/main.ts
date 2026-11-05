@@ -6,6 +6,7 @@ import {
   adjustedTime,
   currentStreak,
   formatClock,
+  isIsoDate,
   localDate,
   newGame,
   recordFinish,
@@ -16,13 +17,14 @@ import { BoardView } from './game/board-view';
 import { GameController } from './game/controller';
 import { attachKeyboardInput } from './game/keyboard-input';
 import { attachPointerInput } from './game/pointer-input';
-import { loadDailyPuzzle } from './game/puzzle-source';
+import { loadPuzzleFor } from './game/puzzle-source';
 import { StatusLine } from './game/status-line';
 import { Timer } from './game/timer';
 import { loadProgress, saveProgress } from './storage/progress';
 import { loadSettings, saveSettings, type Settings } from './storage/settings';
 import { loadStats, saveStats } from './storage/stats';
 import { Store } from './storage/store';
+import { ArchiveCalendar } from './ui/archive';
 import { PauseMenu } from './ui/pause-menu';
 import { renderResults } from './ui/results';
 import { SettingsPanel } from './ui/settings-panel';
@@ -86,7 +88,25 @@ function startGame(puzzle: Puzzle, published: readonly string[]): void {
       timer.resume('menu');
     },
     onGiveUp: () => game.giveUp(),
+    onArchive: () => {
+      timer.pause('archive');
+      archive.open();
+    },
     settings: () => new SettingsPanel(settings, changeSettings).element,
+  });
+  // Picking a day opens it through its link, so archive days can also be bookmarked.
+  const archive = new ArchiveCalendar({
+    published,
+    today: localDate(),
+    current: puzzle.id,
+    progressOf: (date) => loadProgress(store, date)?.state.status ?? null,
+    onPick: (date) => {
+      // Today's puzzle is the plain address; past days get a #YYYY-MM-DD link.
+      const url = date === localDate() ? location.pathname : `${location.pathname}#${date}`;
+      history.replaceState(null, '', url);
+      location.reload();
+    },
+    onClose: () => timer.resume('archive'),
   });
   const toolbar = new Toolbar({
     onMenu: () => menu.open(),
@@ -152,7 +172,7 @@ function startGame(puzzle: Puzzle, published: readonly string[]): void {
   toolbar.update(game.state);
   toolbar.setTimerVisible(settings.showTimer);
   play.append(status.element, board.svg);
-  app.append(toolbar.element, play, menu.element);
+  app.append(toolbar.element, play, menu.element, archive.element);
 
   // A finished puzzle reopens straight to its results (decision D7).
   if (!game.playing) {
@@ -183,12 +203,19 @@ function showLoadError(): void {
 
 async function boot(): Promise<void> {
   try {
-    const { puzzle, published } = await loadDailyPuzzle(localDate());
+    const requested = decodeURIComponent(location.hash.slice(1));
+    const { puzzle, published } = await loadPuzzleFor(
+      isIsoDate(requested) ? requested : null,
+      localDate(),
+    );
     startGame(puzzle, published);
   } catch (error) {
     console.error(error);
     showLoadError();
   }
 }
+
+// Following an archive link (or editing it) opens that day's puzzle.
+window.addEventListener('hashchange', () => location.reload());
 
 void boot();

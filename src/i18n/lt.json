@@ -64,5 +64,12 @@
   "load.retry": "Bandyti dar kartą",
   "stats.played": "Sužaista",
   "stats.streak": "Serija",
-  "stats.solves": "Išspręsta"
+  "stats.solves": "Išspręsta",
+  "archive.previous": "Ankstesnis mėnuo",
+  "archive.next": "Kitas mėnuo",
+  "archive.close": "Uždaryti",
+  "archive.today": "šiandien",
+  "archive.solved": "išspręsta",
+  "archive.started": "pradėta",
+  "archive.gaveUp": "pasiduota"
 }
