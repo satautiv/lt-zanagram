@@ -29,5 +29,6 @@
     "one": "{n} papildomas žodis",
     "few": "{n} papildomi žodžiai",
     "many": "{n} papildomų žodžių"
-  }
+  },
+  "status.solved": "Išspręsta!"
 }

@@ -127,3 +127,45 @@ body {
     transition: none;
   }
 }
+
+/* Status line tones (spec §4): accent while building, green/orange/red for feedback. */
+.status[data-tone='building'] {
+  color: var(--accent);
+}
+
+.status[data-tone='ok'] {
+  color: var(--ok);
+}
+
+.status[data-tone='warn'] {
+  color: var(--warn);
+}
+
+.status[data-tone='error'] {
+  color: var(--error);
+}
+
+.tile.is-shaking {
+  animation: shake 300ms ease;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile.is-shaking {
+    animation: none;
+  }
+}

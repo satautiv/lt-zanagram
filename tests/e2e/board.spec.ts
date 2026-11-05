@@ -7,7 +7,7 @@ test('shows the board of a test puzzle', async ({ page }) => {
   await expect(board.locator('.tile')).toHaveCount(16);
   await expect(board.locator('.tile-letter')).toHaveText([...'IPMVTNIEURGSTĖMA']);
   await expect(board.locator('.bridge')).toHaveCount(26);
-  await expect(page.getByText('Liko 9 žodžiai')).toBeVisible();
+  await expect(page.getByRole('status')).toHaveText('Liko 9 žodžiai');
 });
 
 test('the board fits a phone screen without scrolling sideways', async ({ page }) => {
