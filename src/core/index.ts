@@ -6,3 +6,4 @@ export * from './puzzle';
 export * from './game';
 export * from './typing';
 export * from './hint';
+export * from './obfuscate';
