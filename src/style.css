@@ -2,7 +2,13 @@
   --bg: #141414;
   --tile: #2e2c29;
   --text: #f2efe9;
+  --muted: #9a958d;
   --accent: #4169e1;
+  --hint: #c9922e;
+  --ok: #3fb950;
+  --warn: #e3a03a;
+  --error: #e5534b;
+  --font: 'Nunito', system-ui, sans-serif;
   color-scheme: dark;
 }
 
@@ -16,16 +22,108 @@ body {
   min-height: 100%;
   background: var(--bg);
   color: var(--text);
-  font-family: system-ui, sans-serif;
+  font-family: var(--font);
 }
 
 #app {
   max-width: 380px;
   margin: 0 auto;
   padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .title {
   font-size: 1.25rem;
+  font-weight: 800;
   text-align: center;
+  margin: 0;
+}
+
+.status {
+  min-height: 1.6em;
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Board (spec §5): bridges under tiles, tile colour, accent for the selected path. */
+.board {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.bridge {
+  stroke: var(--tile);
+  stroke-linecap: round;
+  transition:
+    opacity 300ms ease,
+    stroke 120ms ease;
+}
+
+.bridge.is-selected {
+  stroke: var(--accent);
+}
+
+.bridge.is-gone {
+  opacity: 0;
+}
+
+.tile {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    opacity 300ms ease,
+    transform 300ms ease;
+}
+
+.tile-face {
+  fill: var(--tile);
+  transition: fill 120ms ease;
+}
+
+.tile-ring {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 3;
+}
+
+.tile-letter {
+  fill: var(--text);
+  font-family: var(--font);
+  font-weight: 800;
+  font-size: 34px;
+  pointer-events: none;
+}
+
+.tile.is-selected .tile-face {
+  fill: var(--accent);
+}
+
+/* Colour is never the only signal: selected tiles also get a ring (spec §10). */
+.tile.is-selected .tile-ring {
+  stroke: var(--text);
+}
+
+.tile.is-hinted .tile-face {
+  fill: var(--hint);
+}
+
+.tile.is-gone {
+  opacity: 0;
+  transform: scale(0.4);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bridge,
+  .tile,
+  .tile-face {
+    transition: none;
+  }
 }
