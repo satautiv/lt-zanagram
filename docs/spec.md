@@ -95,13 +95,13 @@ While building, the header replaces "N words left" with the current word in the 
 
 On submit, show one short message in the header for about 1.2 s, then return to the count:
 
-| Case | Message (LT) | Colour |
-| --- | --- | --- |
-| Fewer than 4 letters | Mažiausiai 4 raidės | red |
-| Not in any word list | Žodžio nėra sąraše | red |
-| Required or extra word already found | Jau rastas | orange |
-| Required word found | Random praise, e.g. Puiku!, Šaunu!, Gerai! (only if "Feedback messages" is on) | green |
-| Extra word found | Papildomas žodis! −10 s | green |
+| Case                                 | Message (LT)                                                                   | Colour |
+| ------------------------------------ | ------------------------------------------------------------------------------ | ------ |
+| Fewer than 4 letters                 | Mažiausiai 4 raidės                                                            | red    |
+| Not in any word list                 | Žodžio nėra sąraše                                                             | red    |
+| Required or extra word already found | Jau rastas                                                                     | orange |
+| Required word found                  | Random praise, e.g. Puiku!, Šaunu!, Gerai! (only if "Feedback messages" is on) | green  |
+| Extra word found                     | Papildomas žodis! −10 s                                                        | green  |
 
 The first extra word ever found also opens a one-time dialog explaining extras: they are less common words, not needed to finish, and each takes 10 seconds off the time. Invalid submissions get a short horizontal shake of the path. Add optional haptics (`navigator.vibrate`) on mobile.
 
@@ -175,11 +175,11 @@ Use the same helper for other counts (hints: patarimas / patarimai / patarimų; 
 
 Use two lists: a small curated list of common base forms for required words, and a large list of every valid form for accepting extras. Lithuanian inflection is the main design risk: one noun has 14+ forms, so without this split boards fill with obscure endings.
 
-| List | Contents | Size target | Used for |
-| --- | --- | --- | --- |
-| `required.txt` | Common lemmas only: nouns in nominative singular (NAMAS), verbs in the infinitive (EITI), adjectives in masculine nominative singular (GERAS), common adverbs and numerals. 4–12 letters. | 5,000–10,000 words | Choosing required words in the generator |
-| `valid.txt` | Every correctly spelled Lithuanian word form, including all inflections, 4–16 letters | Hundreds of thousands to a few million forms | Finding all extras on a board (generator, editor) |
-| `blocklist.txt` | Vulgar, offensive, slur and sensitive words | Hand-kept | Removed from both lists |
+| List            | Contents                                                                                                                                                                                  | Size target                                  | Used for                                          |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- | ------------------------------------------------- |
+| `required.txt`  | Common lemmas only: nouns in nominative singular (NAMAS), verbs in the infinitive (EITI), adjectives in masculine nominative singular (GERAS), common adverbs and numerals. 4–12 letters. | 5,000–10,000 words                           | Choosing required words in the generator          |
+| `valid.txt`     | Every correctly spelled Lithuanian word form, including all inflections, 4–16 letters                                                                                                     | Hundreds of thousands to a few million forms | Finding all extras on a board (generator, editor) |
+| `blocklist.txt` | Vulgar, offensive, slur and sensitive words                                                                                                                                               | Hand-kept                                    | Removed from both lists                           |
 
 Rules:
 
@@ -308,17 +308,17 @@ Build in five milestones; each ends with passing tests and a playable build, so 
 
 Settled in the grilling session on 2026-11-05:
 
-| # | Decision |
-| --- | --- |
-| D1 | Vocabulary: Puzzle (whole day's content) vs Board (tiles + bridges) vs Submission (a committed path before judgement). See `GLOSSARY.md`. |
-| D2 | Puzzle files are committed already obfuscated, because the repo is public ([ADR-0001](adr/0001-puzzles-obfuscated-at-rest.md)). |
-| D3 | The streak counts only a puzzle that was the daily puzzle when started; a day with no published puzzle freezes the streak; the fallback puzzle never counts. |
-| D4 | Late-night solves count: started on its day and solved before the next daily puzzle is played. |
-| D5 | Per-word times on the results screen are adjusted for extra-word bonuses. |
-| D6 | Played and Solves count daily and archive puzzles; the streak is daily-only; giving up an archive puzzle doesn't touch the streak. |
-| D7 | Finished puzzles reopen to their results screen; no replay in v1. |
-| D8 | `valid.txt` is gitignored and rebuilt from a pinned source; the small lists are committed. |
-| D9 | The author is the sole reviewer of generated puzzles and definitions; agents research, generate and draft. 60 approved puzzles before launch. |
-| D10 | "Žodžių tiltai" stays the working title; renaming is one later ticket, decided before launch. |
-| D11 | One branch + PR per ticket; CI must pass; the agent merges. |
-| D12 | All five milestones are ticketed up front. |
+| #   | Decision                                                                                                                                                     |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| D1  | Vocabulary: Puzzle (whole day's content) vs Board (tiles + bridges) vs Submission (a committed path before judgement). See `GLOSSARY.md`.                    |
+| D2  | Puzzle files are committed already obfuscated, because the repo is public ([ADR-0001](adr/0001-puzzles-obfuscated-at-rest.md)).                              |
+| D3  | The streak counts only a puzzle that was the daily puzzle when started; a day with no published puzzle freezes the streak; the fallback puzzle never counts. |
+| D4  | Late-night solves count: started on its day and solved before the next daily puzzle is played.                                                               |
+| D5  | Per-word times on the results screen are adjusted for extra-word bonuses.                                                                                    |
+| D6  | Played and Solves count daily and archive puzzles; the streak is daily-only; giving up an archive puzzle doesn't touch the streak.                           |
+| D7  | Finished puzzles reopen to their results screen; no replay in v1.                                                                                            |
+| D8  | `valid.txt` is gitignored and rebuilt from a pinned source; the small lists are committed.                                                                   |
+| D9  | The author is the sole reviewer of generated puzzles and definitions; agents research, generate and draft. 60 approved puzzles before launch.                |
+| D10 | "Žodžių tiltai" stays the working title; renaming is one later ticket, decided before launch.                                                                |
+| D11 | One branch + PR per ticket; CI must pass; the agent merges.                                                                                                  |
+| D12 | All five milestones are ticketed up front.                                                                                                                   |
