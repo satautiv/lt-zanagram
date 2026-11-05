@@ -43,3 +43,14 @@ export async function loadDailyPuzzle(today: string): Promise<DailyPuzzle> {
   if (date === null) throw new Error('No puzzles published');
   return { puzzle: await fetchPuzzle(date), isDaily: date === today, published };
 }
+
+/**
+ * The puzzle for a requested date (an archive link, `#YYYY-MM-DD`) if it is published and not in
+ * the future; otherwise today's puzzle as usual.
+ */
+export async function loadPuzzleFor(requested: string | null, today: string): Promise<DailyPuzzle> {
+  if (requested === null || requested > today) return loadDailyPuzzle(today);
+  const published = (await fetchIndex()).map((e) => e.date);
+  if (!published.includes(requested)) return loadDailyPuzzle(today);
+  return { puzzle: await fetchPuzzle(requested), isDaily: requested === today, published };
+}
