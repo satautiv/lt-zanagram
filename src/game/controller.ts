@@ -23,8 +23,8 @@ import type { StatusLine, Tone } from './status-line';
 export interface ControllerOptions {
   /** Raw play time so far; the pausing timer lives outside the controller. */
   elapsedMs?: () => number;
-  /** Random praise on finding a required word ("Feedback messages" setting, default on). */
-  praise?: boolean;
+  /** Random praise on finding a required word ("Pagyrimo žinutės" setting, default on). */
+  praise?: () => boolean;
   onChange?: (state: GameState, result: SubmissionResult | null) => void;
 }
 
@@ -170,7 +170,7 @@ export class GameController {
         break;
       case 'required':
         if (result.solved) say(t('status.solved'), 'ok');
-        else if (this.options.praise ?? true) say(randomPraise(), 'ok');
+        else if (this.options.praise?.() ?? true) say(randomPraise(), 'ok');
         else this.status.idle();
         break;
       default:

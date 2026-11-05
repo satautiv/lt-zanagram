@@ -12,6 +12,18 @@
   color-scheme: dark;
 }
 
+/* Light mode (spec §5): off-white background, light-grey tiles. */
+:root[data-theme='light'] {
+  --bg: #f4f1ea;
+  --tile: #d9d4ca;
+  --text: #22201c;
+  --muted: #6b665d;
+  --ok: #1f7a35;
+  --warn: #a65d00;
+  --error: #c0362f;
+  color-scheme: light;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -103,6 +115,12 @@ body {
 
 .tile.is-selected .tile-face {
   fill: var(--accent);
+}
+
+/* Letters on accent and amber fills stay light in both themes. */
+.tile.is-selected .tile-letter,
+.tile.is-hinted .tile-letter {
+  fill: #fff;
 }
 
 /* Colour is never the only signal: selected tiles also get a ring (spec §10). */
@@ -431,6 +449,68 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .play {
+    transition: none;
+  }
+}
+
+/* Settings (spec §5): three switches. */
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.setting {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 48px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.switch {
+  appearance: none;
+  position: relative;
+  width: 48px;
+  height: 28px;
+  margin: 0;
+  border-radius: 14px;
+  background: var(--tile);
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--text);
+  transition: transform 150ms ease;
+}
+
+.switch:checked {
+  background: var(--accent);
+}
+
+.switch:checked::after {
+  transform: translateX(20px);
+  background: #fff;
+}
+
+.switch:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .switch,
+  .switch::after {
     transition: none;
   }
 }

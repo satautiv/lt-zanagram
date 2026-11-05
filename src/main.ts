@@ -10,13 +10,35 @@ import { attachKeyboardInput } from './game/keyboard-input';
 import { attachPointerInput } from './game/pointer-input';
 import { StatusLine } from './game/status-line';
 import { Timer } from './game/timer';
+import { loadSettings, saveSettings, type Settings } from './storage/settings';
+import { Store } from './storage/store';
 import { PauseMenu } from './ui/pause-menu';
 import { renderResults } from './ui/results';
+import { SettingsPanel } from './ui/settings-panel';
 import { Toolbar } from './ui/toolbar';
 
 const app = document.querySelector<HTMLElement>('#app')!;
 const puzzle = FIXTURES[0]!;
 
+const store = new Store();
+let settings = loadSettings(store);
+
+/** Light mode inverts to an off-white background and light-grey tiles (spec §5). */
+function applyTheme(): void {
+  document.documentElement.dataset.theme = settings.darkMode ? 'dark' : 'light';
+  document
+    .querySelector('meta[name="theme-color"]')
+    ?.setAttribute('content', settings.darkMode ? '#141414' : '#f4f1ea');
+}
+
+function changeSettings(change: Partial<Settings>): void {
+  settings = { ...settings, ...change };
+  saveSettings(store, settings);
+  applyTheme();
+  toolbar.setTimerVisible(settings.showTimer);
+}
+
+applyTheme();
 const timer = new Timer();
 const status = new StatusLine();
 const board = new BoardView(puzzle);
@@ -33,6 +55,7 @@ const menu = new PauseMenu({
     timer.resume('menu');
   },
   onGiveUp: () => game.giveUp(),
+  settings: () => new SettingsPanel(settings, changeSettings).element,
 });
 const toolbar = new Toolbar({
   onMenu: () => menu.open(),
@@ -42,6 +65,7 @@ const toolbar = new Toolbar({
 
 const game = new GameController(puzzle, board, status, {
   elapsedMs: () => timer.elapsedMs,
+  praise: () => settings.feedback,
   onChange: (state) => {
     toolbar.update(state);
     if (state.status === 'playing') return;
@@ -68,5 +92,6 @@ setInterval(showTime, 250);
 showTime();
 
 toolbar.update(game.state);
+toolbar.setTimerVisible(settings.showTimer);
 play.append(status.element, board.svg);
 app.append(toolbar.element, play, menu.element);

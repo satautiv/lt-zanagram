@@ -1,6 +1,8 @@
 import { t } from '../i18n';
 
 export interface PauseMenuActions {
+  /** Builds the settings view shown by "Nustatymai". */
+  settings: () => HTMLElement;
   onOpen: () => void;
   onClose: () => void;
   onGiveUp: () => void;
@@ -22,6 +24,8 @@ export class PauseMenu {
   readonly element: HTMLDialogElement;
   private readonly main: HTMLElement;
   private readonly confirm: HTMLElement;
+  private readonly settingsView: HTMLElement;
+  private readonly title: HTMLElement;
 
   constructor(private readonly actions: PauseMenuActions) {
     this.element = document.createElement('dialog');
@@ -32,6 +36,7 @@ export class PauseMenu {
     title.id = 'pause-title';
     title.className = 'menu-title';
     title.textContent = t('menu.paused');
+    this.title = title;
 
     this.main = document.createElement('div');
     this.main.className = 'menu-items';
@@ -41,18 +46,14 @@ export class PauseMenu {
       item.title = t('menu.soon');
       return item;
     };
+    const settings = button(t('menu.settings'));
+    settings.addEventListener('click', () => this.show('settings'));
     const giveUp = button(t('menu.giveUp'));
-    giveUp.addEventListener('click', () => this.showConfirm(true));
+    giveUp.addEventListener('click', () => this.show('confirm'));
     const resume = button(t('menu.resume'), 'menu-item is-primary');
     resume.addEventListener('click', () => this.close());
-    // How to play, settings and the archive arrive with their own tickets.
-    this.main.append(
-      soon(t('menu.howToPlay')),
-      soon(t('menu.settings')),
-      soon(t('menu.archive')),
-      giveUp,
-      resume,
-    );
+    // How to play and the archive arrive with their own tickets.
+    this.main.append(soon(t('menu.howToPlay')), settings, soon(t('menu.archive')), giveUp, resume);
 
     this.confirm = document.createElement('div');
     this.confirm.className = 'menu-items';
@@ -66,10 +67,17 @@ export class PauseMenu {
       this.actions.onGiveUp();
     });
     const no = button(t('giveUp.cancel'));
-    no.addEventListener('click', () => this.showConfirm(false));
+    no.addEventListener('click', () => this.show('main'));
     this.confirm.append(question, yes, no);
 
-    this.element.append(title, this.main, this.confirm);
+    this.settingsView = document.createElement('div');
+    this.settingsView.className = 'menu-items';
+    this.settingsView.hidden = true;
+    const back = button(t('settings.back'));
+    back.addEventListener('click', () => this.show('main'));
+    this.settingsView.append(actions.settings(), back);
+
+    this.element.append(title, this.main, this.confirm, this.settingsView);
     // Escape and backdrop clicks close it like Tęsti.
     this.element.addEventListener('close', () => this.actions.onClose());
     this.element.addEventListener('click', (event) => {
@@ -83,7 +91,7 @@ export class PauseMenu {
 
   open(): void {
     if (this.element.open) return;
-    this.showConfirm(false);
+    this.show('main');
     this.element.showModal();
     this.actions.onOpen();
   }
@@ -92,8 +100,10 @@ export class PauseMenu {
     if (this.element.open) this.element.close();
   }
 
-  private showConfirm(show: boolean): void {
-    this.main.hidden = show;
-    this.confirm.hidden = !show;
+  private show(view: 'main' | 'confirm' | 'settings'): void {
+    this.main.hidden = view !== 'main';
+    this.confirm.hidden = view !== 'confirm';
+    this.settingsView.hidden = view !== 'settings';
+    this.title.textContent = view === 'settings' ? t('settings.title') : t('menu.paused');
   }
 }
