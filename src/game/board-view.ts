@@ -41,6 +41,7 @@ export class BoardView {
   readonly svg: SVGSVGElement;
   readonly size: number;
   private readonly tiles: SVGGElement[] = [];
+  private readonly tileLayer: SVGGElement;
   private readonly bridges = new Map<string, SVGLineElement>();
 
   constructor(puzzle: Puzzle) {
@@ -70,6 +71,7 @@ export class BoardView {
     }
 
     const tileLayer = el('g', { class: 'tiles' });
+    this.tileLayer = tileLayer;
     puzzle.letters.forEach((letter, tile) => {
       const { x, y } = this.center(tile);
       const outer = el('g', { transform: `translate(${x} ${y})`, 'data-tile': tile });
@@ -99,6 +101,37 @@ export class BoardView {
       x: PAD + TILE / 2 + colOf(this.size, tile) * pitch,
       y: PAD + TILE / 2 + rowOf(this.size, tile) * pitch,
     };
+  }
+
+  /**
+   * The tile under a screen point, if the point is within `radiusRatio` of that tile's radius.
+   * Works in the tile layer's own coordinates, so it stays right when the board is scaled or rotated.
+   */
+  tileAt(clientX: number, clientY: number, radiusRatio: number): TileIndex | null {
+    const ctm = this.tileLayer.getScreenCTM();
+    if (!ctm) return null;
+    const point = new DOMPoint(clientX, clientY).matrixTransform(ctm.inverse());
+    const reach = (TILE / 2) * radiusRatio;
+    for (let tile = 0; tile < this.tiles.length; tile++) {
+      const c = this.center(tile);
+      if (Math.hypot(point.x - c.x, point.y - c.y) <= reach) return tile;
+    }
+    return null;
+  }
+
+  /** A short horizontal shake of a rejected path (spec §4). */
+  shake(path: readonly TileIndex[]): void {
+    for (const tile of path) {
+      const node = this.tiles[tile];
+      if (!node) continue;
+      node.classList.remove('is-shaking');
+      // Restart the animation if the same tile shakes twice in a row.
+      void node.getBoundingClientRect();
+      node.classList.add('is-shaking');
+      node.addEventListener('animationend', () => node.classList.remove('is-shaking'), {
+        once: true,
+      });
+    }
   }
 
   update(state: BoardViewState): void {

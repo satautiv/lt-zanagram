@@ -2,27 +2,18 @@
 import '@fontsource/nunito/latin-800.css';
 import '@fontsource/nunito/latin-ext-800.css';
 import './style.css';
-import { newGame, visibility, wordsLeft } from './core';
 import { BoardView } from './game/board-view';
+import { GameController } from './game/controller';
+import { attachDragInput } from './game/drag-input';
 import { FIXTURES } from './game/fixtures';
-import { t } from './i18n';
+import { StatusLine } from './game/status-line';
 
 const app = document.querySelector<HTMLElement>('#app')!;
 const puzzle = FIXTURES[0]!;
-const state = newGame(puzzle);
 
-const status = document.createElement('div');
-status.className = 'status';
-status.setAttribute('aria-live', 'polite');
-status.textContent = t('status.wordsLeft', { n: wordsLeft(puzzle, state) });
-
+const status = new StatusLine();
 const board = new BoardView(puzzle);
-const visible = visibility(puzzle, state);
-board.update({
-  visibleTiles: visible.tiles,
-  visibleBridges: visible.bridges,
-  selected: [],
-  hinted: [],
-});
+const game = new GameController(puzzle, board, status);
+attachDragInput(board, game);
 
-app.append(status, board.svg);
+app.append(status.element, board.svg);
