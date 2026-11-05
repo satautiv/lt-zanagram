@@ -2,7 +2,7 @@
 import '@fontsource/nunito/latin-800.css';
 import '@fontsource/nunito/latin-ext-800.css';
 import './style.css';
-import { adjustedTime, formatClock } from './core';
+import { adjustedTime, formatClock, localDate, newGame } from './core';
 import { BoardView } from './game/board-view';
 import { GameController } from './game/controller';
 import { FIXTURES } from './game/fixtures';
@@ -10,6 +10,7 @@ import { attachKeyboardInput } from './game/keyboard-input';
 import { attachPointerInput } from './game/pointer-input';
 import { StatusLine } from './game/status-line';
 import { Timer } from './game/timer';
+import { loadProgress, saveProgress } from './storage/progress';
 import { loadSettings, saveSettings, type Settings } from './storage/settings';
 import { Store } from './storage/store';
 import { PauseMenu } from './ui/pause-menu';
@@ -39,7 +40,14 @@ function changeSettings(change: Partial<Settings>): void {
 }
 
 applyTheme();
-const timer = new Timer();
+
+// Progress is saved after every change and restored on reload (spec §9 Saving).
+const saved = loadProgress(store, puzzle.id);
+const startedOn = saved?.startedOn ?? localDate();
+const initial = saved?.state ?? newGame(puzzle);
+const save = () => saveProgress(store, { state: game.snapshot(), startedOn });
+
+const timer = new Timer(initial.elapsedMs);
 const status = new StatusLine();
 const board = new BoardView(puzzle);
 const play = document.createElement('div');
@@ -63,28 +71,43 @@ const toolbar = new Toolbar({
   onRotate: () => game.rotate(),
 });
 
-const game = new GameController(puzzle, board, status, {
-  elapsedMs: () => timer.elapsedMs,
-  praise: () => settings.feedback,
-  onChange: (state) => {
-    toolbar.update(state);
-    if (state.status === 'playing') return;
-    timer.pause('finished');
-    // Let the last word fall away before the results replace the board.
-    setTimeout(() => {
-      play.replaceChildren(renderResults(puzzle, state));
-      toolbar.element.remove();
-    }, 700);
+function showResults(): void {
+  play.replaceChildren(renderResults(puzzle, game.state));
+  toolbar.element.remove();
+}
+
+const game = new GameController(
+  puzzle,
+  board,
+  status,
+  {
+    elapsedMs: () => timer.elapsedMs,
+    praise: () => settings.feedback,
+    onChange: (state) => {
+      save();
+      toolbar.update(state);
+      if (state.status === 'playing') return;
+      timer.pause('finished');
+      // Let the last word fall away before the results replace the board.
+      setTimeout(showResults, 700);
+    },
   },
-});
+  initial,
+);
 attachPointerInput(board, game);
 attachKeyboardInput(game, { paused: () => menu.isOpen });
 
-// The timer pauses while the page is hidden (spec §5 Timer).
+// The timer pauses while the page is hidden (spec §5 Timer); save the time on the way out.
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden) timer.pause('hidden');
-  else timer.resume('hidden');
+  if (document.hidden) {
+    timer.pause('hidden');
+    if (game.playing) save();
+  } else {
+    timer.resume('hidden');
+  }
 });
+window.addEventListener('pagehide', () => game.playing && save());
+setInterval(() => game.playing && timer.running && save(), 5_000);
 
 const showTime = () =>
   toolbar.setTime(formatClock(adjustedTime(timer.elapsedMs, game.state.extras.length)));
@@ -95,3 +118,9 @@ toolbar.update(game.state);
 toolbar.setTimerVisible(settings.showTimer);
 play.append(status.element, board.svg);
 app.append(toolbar.element, play, menu.element);
+
+// A finished puzzle reopens straight to its results (decision D7).
+if (!game.playing) {
+  timer.pause('finished');
+  showResults();
+}
