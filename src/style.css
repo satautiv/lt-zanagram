@@ -169,3 +169,90 @@ body {
     animation: none;
   }
 }
+
+/* Results screen (spec §5). */
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.results-title {
+  margin: 8px 0 0;
+  font-size: 1.6rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.chips {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--tile);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.results-heading {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.word-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.word-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--tile);
+}
+
+.word-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.word {
+  font-weight: 800;
+}
+
+.definition {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.word-time {
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.word-row.is-missed .word,
+.word-row.is-missed .definition {
+  opacity: 0.45;
+}
+
+.extra-list {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.extra-list.is-empty {
+  color: var(--muted);
+}
