@@ -6,7 +6,7 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? 'github' : 'list',
   use: {
-    baseURL: 'http://localhost:4173',
+    baseURL: 'http://localhost:4173/lt-zanagram/',
     trace: 'on-first-retry',
   },
   projects: [
@@ -15,7 +15,7 @@ export default defineConfig({
   ],
   webServer: {
     command: 'npm run build && npm run preview -- --port 4173 --strictPort',
-    url: 'http://localhost:4173',
+    url: 'http://localhost:4173/lt-zanagram/',
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },
