@@ -1,6 +1,9 @@
 import {
   bridgeKey,
   newGame,
+  revealedTiles,
+  rotate,
+  useHint,
   setElapsed,
   spell,
   submit,
@@ -29,6 +32,8 @@ export interface ControllerOptions {
 export class GameController {
   state: GameState;
   private path: TileIndex[] = [];
+  /** Quarter turns shown so far; keeps growing so every turn animates clockwise. */
+  private turns: number;
   /** Wall-clock start, until the pausing timer ticket replaces it. */
   private readonly startedAt: number;
   private onBoard: Visibility;
@@ -42,6 +47,8 @@ export class GameController {
   ) {
     this.state = initial;
     this.startedAt = Date.now() - initial.elapsedMs;
+    this.turns = initial.rotation;
+    board.setRotation(this.turns);
     this.onBoard = visibility(puzzle, initial);
     this.render();
   }
@@ -94,6 +101,24 @@ export class GameController {
     if (this.path.length > 0) this.status.building(spell(this.puzzle, this.path));
     else this.status.idle();
     this.renderBoard();
+  }
+
+  /** Uses one hint, if any are left (spec §5 Hint). */
+  hint(): void {
+    if (!this.playing) return;
+    const next = useHint(this.puzzle, this.state);
+    if (next === this.state) return;
+    this.state = next;
+    this.render();
+    this.options.onChange?.(this.state, null);
+  }
+
+  /** Turns the board a quarter turn clockwise; purely visual (spec §5 Rotate). */
+  rotate(): void {
+    this.state = rotate(this.state);
+    this.turns += 1;
+    this.board.setRotation(this.turns);
+    this.options.onChange?.(this.state, null);
   }
 
   clear(): void {
@@ -167,7 +192,7 @@ export class GameController {
       visibleTiles: this.onBoard.tiles,
       visibleBridges: this.onBoard.bridges,
       selected: this.path,
-      hinted: [],
+      hinted: revealedTiles(this.puzzle, this.state),
     });
   }
 }

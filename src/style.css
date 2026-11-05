@@ -256,3 +256,90 @@ body {
 .extra-list.is-empty {
   color: var(--muted);
 }
+
+/* Toolbar (spec §5): menu and timer left, Rotate and Hint right. */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 44px;
+}
+
+.toolbar-side {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.icon-button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.icon-button:hover:not(:disabled) {
+  background: var(--tile);
+}
+
+.icon-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.icon-button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.icon-button svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.badge {
+  position: absolute;
+  top: 4px;
+  right: 2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: var(--hint);
+  color: var(--bg);
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 18px;
+}
+
+/* Rotation (spec §5 Rotate): the board turns, the letters stay upright. */
+.rotor {
+  transform-box: view-box;
+  transform-origin: center;
+  transition: transform 300ms ease;
+}
+
+.tile-letter {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 300ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rotor,
+  .tile-letter {
+    transition: none;
+  }
+}
