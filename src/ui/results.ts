@@ -17,7 +17,13 @@ function node<K extends keyof HTMLElementTagNameMap>(
  * time, a hints chip, today's words (last found first, missed ones greyed) with definitions and
  * find times, and the extra words found.
  */
-export function renderResults(puzzle: Puzzle, state: GameState): HTMLElement {
+export interface StatsRow {
+  played: number;
+  streak: number;
+  solves: number;
+}
+
+export function renderResults(puzzle: Puzzle, state: GameState, stats?: StatsRow): HTMLElement {
   const root = node('section', 'results');
   root.setAttribute('aria-labelledby', 'results-title');
 
@@ -55,8 +61,25 @@ export function renderResults(puzzle: Puzzle, state: GameState): HTMLElement {
       : node('p', 'extra-list is-empty', t('results.noExtras')),
   );
 
-  root.append(title, chips, words, extras);
+  root.append(title, chips);
+  if (stats) root.append(statsRow(stats));
+  root.append(words, extras);
   return root;
+}
+
+/** Played, current daily streak and solves (spec §5 Results). */
+function statsRow(stats: StatsRow): HTMLElement {
+  const row = node('dl', 'stats');
+  for (const [label, value] of [
+    [t('stats.played'), stats.played],
+    [t('stats.streak'), stats.streak],
+    [t('stats.solves'), stats.solves],
+  ] as const) {
+    const item = node('div', 'stat');
+    item.append(node('dd', 'stat-value', String(value)), node('dt', 'stat-label', label));
+    row.append(item);
+  }
+  return row;
 }
 
 function wordRow(word: string, definition: string, time: string, missed: boolean): HTMLLIElement {

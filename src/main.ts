@@ -2,7 +2,16 @@
 import '@fontsource/nunito/latin-800.css';
 import '@fontsource/nunito/latin-ext-800.css';
 import './style.css';
-import { adjustedTime, formatClock, localDate, newGame, type Puzzle } from './core';
+import {
+  adjustedTime,
+  currentStreak,
+  formatClock,
+  localDate,
+  newGame,
+  recordFinish,
+  recordStart,
+  type Puzzle,
+} from './core';
 import { BoardView } from './game/board-view';
 import { GameController } from './game/controller';
 import { attachKeyboardInput } from './game/keyboard-input';
@@ -12,6 +21,7 @@ import { StatusLine } from './game/status-line';
 import { Timer } from './game/timer';
 import { loadProgress, saveProgress } from './storage/progress';
 import { loadSettings, saveSettings, type Settings } from './storage/settings';
+import { loadStats, saveStats } from './storage/stats';
 import { Store } from './storage/store';
 import { PauseMenu } from './ui/pause-menu';
 import { renderResults } from './ui/results';
@@ -45,12 +55,20 @@ function changeSettings(change: Partial<Settings>): void {
 applyTheme();
 
 /** Builds the game screen for one puzzle: board, toolbar, menu, timer and saving. */
-function startGame(puzzle: Puzzle): void {
+function startGame(puzzle: Puzzle, published: readonly string[]): void {
   // Progress is saved after every change and restored on reload (spec §9 Saving).
   const saved = loadProgress(store, puzzle.id);
   const startedOn = saved?.startedOn ?? localDate();
   const initial = saved?.state ?? newGame(puzzle);
   const save = () => saveProgress(store, { state: game.snapshot(), startedOn });
+
+  // Stats (spec §9): a first opening counts as played; finishing updates solves and the streak.
+  let stats = loadStats(store);
+  if (!saved) {
+    stats = recordStart(stats, puzzle.id, startedOn);
+    saveStats(store, stats);
+    saveProgress(store, { state: initial, startedOn });
+  }
 
   const timer = new Timer(initial.elapsedMs);
   const status = new StatusLine();
@@ -77,7 +95,12 @@ function startGame(puzzle: Puzzle): void {
   });
 
   function showResults(): void {
-    play.replaceChildren(renderResults(puzzle, game.state));
+    const row = {
+      played: stats.played,
+      streak: currentStreak(stats, localDate(), published),
+      solves: stats.solves,
+    };
+    play.replaceChildren(renderResults(puzzle, game.state, row));
     toolbar.element.remove();
   }
 
@@ -93,6 +116,13 @@ function startGame(puzzle: Puzzle): void {
         toolbar.update(state);
         if (state.status === 'playing') return;
         timer.pause('finished');
+        stats = recordFinish(stats, {
+          puzzleId: puzzle.id,
+          startedOn,
+          status: state.status,
+          published,
+        });
+        saveStats(store, stats);
         // Let the last word fall away before the results replace the board.
         setTimeout(showResults, 700);
       },
@@ -153,8 +183,8 @@ function showLoadError(): void {
 
 async function boot(): Promise<void> {
   try {
-    const { puzzle } = await loadDailyPuzzle(localDate());
-    startGame(puzzle);
+    const { puzzle, published } = await loadDailyPuzzle(localDate());
+    startGame(puzzle, published);
   } catch (error) {
     console.error(error);
     showLoadError();
