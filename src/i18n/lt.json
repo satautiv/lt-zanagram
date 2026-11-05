@@ -1,0 +1,33 @@
+{
+  "app.title": "Žodžių tiltai",
+  "status.wordsLeft": {
+    "one": "Liko {n} žodis",
+    "few": "Liko {n} žodžiai",
+    "many": "Liko {n} žodžių"
+  },
+  "feedback.tooShort": "Mažiausiai 4 raidės",
+  "feedback.notInList": "Žodžio nėra sąraše",
+  "feedback.alreadyFound": "Jau rastas",
+  "feedback.extraFound": "Papildomas žodis! −10 s",
+  "feedback.praise": "Puiku!|Šaunu!|Gerai!",
+  "count.hints": {
+    "one": "{n} patarimas",
+    "few": "{n} patarimai",
+    "many": "{n} patarimų"
+  },
+  "count.seconds": {
+    "one": "{n} sekundė",
+    "few": "{n} sekundės",
+    "many": "{n} sekundžių"
+  },
+  "count.days": {
+    "one": "{n} diena",
+    "few": "{n} dienos",
+    "many": "{n} dienų"
+  },
+  "count.extras": {
+    "one": "{n} papildomas žodis",
+    "few": "{n} papildomi žodžiai",
+    "many": "{n} papildomų žodžių"
+  }
+}
