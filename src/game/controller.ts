@@ -1,5 +1,6 @@
 import {
   bridgeKey,
+  giveUp,
   newGame,
   revealedTiles,
   rotate,
@@ -20,6 +21,8 @@ import type { BoardView } from './board-view';
 import type { StatusLine, Tone } from './status-line';
 
 export interface ControllerOptions {
+  /** Raw play time so far; the pausing timer lives outside the controller. */
+  elapsedMs?: () => number;
   /** Random praise on finding a required word ("Feedback messages" setting, default on). */
   praise?: boolean;
   onChange?: (state: GameState, result: SubmissionResult | null) => void;
@@ -34,8 +37,6 @@ export class GameController {
   private path: TileIndex[] = [];
   /** Quarter turns shown so far; keeps growing so every turn animates clockwise. */
   private turns: number;
-  /** Wall-clock start, until the pausing timer ticket replaces it. */
-  private readonly startedAt: number;
   private onBoard: Visibility;
 
   constructor(
@@ -46,7 +47,6 @@ export class GameController {
     initial: GameState = newGame(puzzle),
   ) {
     this.state = initial;
-    this.startedAt = Date.now() - initial.elapsedMs;
     this.turns = initial.rotation;
     board.setRotation(this.turns);
     this.onBoard = visibility(puzzle, initial);
@@ -103,6 +103,16 @@ export class GameController {
     this.renderBoard();
   }
 
+  /** Ends the puzzle as given up; the results show the remaining words (spec §2 rule 10). */
+  giveUp(): void {
+    if (!this.playing) return;
+    this.path = [];
+    this.state = giveUp(this.timed());
+    this.onBoard = visibility(this.puzzle, this.state);
+    this.render();
+    this.options.onChange?.(this.state, null);
+  }
+
   /** Uses one hint, if any are left (spec §5 Hint). */
   hint(): void {
     if (!this.playing) return;
@@ -132,7 +142,7 @@ export class GameController {
       this.clear();
       return null;
     }
-    const timed = setElapsed(this.state, Date.now() - this.startedAt);
+    const timed = this.timed();
     const { state, result } = submit(this.puzzle, timed, path);
     this.state = state;
     this.onBoard = visibility(this.puzzle, state);
@@ -176,6 +186,11 @@ export class GameController {
     } else if (result.kind === 'required' || result.kind === 'extra') {
       navigator.vibrate?.(20);
     }
+  }
+
+  private timed(): GameState {
+    const elapsed = this.options.elapsedMs?.();
+    return elapsed === undefined ? this.state : setElapsed(this.state, elapsed);
   }
 
   private render(): void {

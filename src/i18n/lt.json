@@ -42,5 +42,17 @@
     "few": "Liko {n} patarimai",
     "many": "Liko {n} patarimų"
   },
-  "toolbar.rotate": "Pasukti lentą"
+  "toolbar.rotate": "Pasukti lentą",
+  "menu.open": "Meniu",
+  "menu.paused": "Žaidimas sustabdytas",
+  "menu.howToPlay": "Kaip žaisti",
+  "menu.settings": "Nustatymai",
+  "menu.archive": "Ankstesni galvosūkiai",
+  "menu.giveUp": "Pasiduoti",
+  "menu.resume": "Tęsti",
+  "menu.soon": "Netrukus",
+  "giveUp.question": "Ar tikrai norite pasiduoti? Bus parodyti visi likę žodžiai.",
+  "giveUp.confirm": "Taip, pasiduoti",
+  "giveUp.cancel": "Atšaukti",
+  "toolbar.timer": "Laikas"
 }
