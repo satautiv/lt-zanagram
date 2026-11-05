@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 test('app shell loads with the game title', async ({ page }) => {
   // Relative to baseURL, which carries the Pages sub-path.

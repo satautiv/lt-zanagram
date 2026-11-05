@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './fixtures';
 import { readFileSync } from 'node:fs';
 import type { Puzzle } from '../../src/core';
 
@@ -7,6 +7,7 @@ const puzzle = JSON.parse(
 ) as Puzzle;
 
 async function typeWord(page: Page, word: string): Promise<void> {
+  await page.locator('.board').waitFor(); // the puzzle loads asynchronously
   for (const key of [...word.toLowerCase(), 'Enter']) {
     await page.evaluate((k) => window.dispatchEvent(new KeyboardEvent('keydown', { key: k })), key);
   }

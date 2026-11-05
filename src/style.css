@@ -514,3 +514,11 @@ body {
     transition: none;
   }
 }
+
+.load-error {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 0;
+  text-align: center;
+}

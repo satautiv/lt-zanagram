@@ -11,7 +11,8 @@
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
     "e2e": "playwright test",
-    "puzzle:show": "tsx tools/puzzle-show.ts"
+    "puzzle:show": "tsx tools/puzzle-show.ts",
+    "puzzles:index": "tsx tools/puzzles-index.ts"
   },
   "repository": {
     "type": "git",

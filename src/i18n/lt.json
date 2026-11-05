@@ -59,5 +59,7 @@
   "settings.darkMode": "Tamsi tema",
   "settings.showTimer": "Rodyti laikmatį",
   "settings.feedback": "Pagyrimo žinutės",
-  "settings.back": "Atgal"
+  "settings.back": "Atgal",
+  "load.error": "Nepavyko įkelti galvosūkio. Patikrinkite ryšį ir bandykite dar kartą.",
+  "load.retry": "Bandyti dar kartą"
 }

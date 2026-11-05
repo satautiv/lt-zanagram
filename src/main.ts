@@ -2,12 +2,12 @@
 import '@fontsource/nunito/latin-800.css';
 import '@fontsource/nunito/latin-ext-800.css';
 import './style.css';
-import { adjustedTime, formatClock, localDate, newGame } from './core';
+import { adjustedTime, formatClock, localDate, newGame, type Puzzle } from './core';
 import { BoardView } from './game/board-view';
 import { GameController } from './game/controller';
-import { FIXTURES } from './game/fixtures';
 import { attachKeyboardInput } from './game/keyboard-input';
 import { attachPointerInput } from './game/pointer-input';
+import { loadDailyPuzzle } from './game/puzzle-source';
 import { StatusLine } from './game/status-line';
 import { Timer } from './game/timer';
 import { loadProgress, saveProgress } from './storage/progress';
@@ -17,9 +17,9 @@ import { PauseMenu } from './ui/pause-menu';
 import { renderResults } from './ui/results';
 import { SettingsPanel } from './ui/settings-panel';
 import { Toolbar } from './ui/toolbar';
+import { t } from './i18n';
 
 const app = document.querySelector<HTMLElement>('#app')!;
-const puzzle = FIXTURES[0]!;
 
 const store = new Store();
 let settings = loadSettings(store);
@@ -32,95 +32,133 @@ function applyTheme(): void {
     ?.setAttribute('content', settings.darkMode ? '#141414' : '#f4f1ea');
 }
 
+/** Set by the game screen so settings changes reach it. */
+let onSettingsChanged = () => {};
+
 function changeSettings(change: Partial<Settings>): void {
   settings = { ...settings, ...change };
   saveSettings(store, settings);
   applyTheme();
-  toolbar.setTimerVisible(settings.showTimer);
+  onSettingsChanged();
 }
 
 applyTheme();
 
-// Progress is saved after every change and restored on reload (spec §9 Saving).
-const saved = loadProgress(store, puzzle.id);
-const startedOn = saved?.startedOn ?? localDate();
-const initial = saved?.state ?? newGame(puzzle);
-const save = () => saveProgress(store, { state: game.snapshot(), startedOn });
+/** Builds the game screen for one puzzle: board, toolbar, menu, timer and saving. */
+function startGame(puzzle: Puzzle): void {
+  // Progress is saved after every change and restored on reload (spec §9 Saving).
+  const saved = loadProgress(store, puzzle.id);
+  const startedOn = saved?.startedOn ?? localDate();
+  const initial = saved?.state ?? newGame(puzzle);
+  const save = () => saveProgress(store, { state: game.snapshot(), startedOn });
 
-const timer = new Timer(initial.elapsedMs);
-const status = new StatusLine();
-const board = new BoardView(puzzle);
-const play = document.createElement('div');
-play.className = 'play';
+  const timer = new Timer(initial.elapsedMs);
+  const status = new StatusLine();
+  const board = new BoardView(puzzle);
+  const play = document.createElement('div');
+  play.className = 'play';
 
-const menu = new PauseMenu({
-  onOpen: () => {
-    timer.pause('menu');
-    play.classList.add('is-paused');
-  },
-  onClose: () => {
-    play.classList.remove('is-paused');
-    timer.resume('menu');
-  },
-  onGiveUp: () => game.giveUp(),
-  settings: () => new SettingsPanel(settings, changeSettings).element,
-});
-const toolbar = new Toolbar({
-  onMenu: () => menu.open(),
-  onHint: () => game.hint(),
-  onRotate: () => game.rotate(),
-});
-
-function showResults(): void {
-  play.replaceChildren(renderResults(puzzle, game.state));
-  toolbar.element.remove();
-}
-
-const game = new GameController(
-  puzzle,
-  board,
-  status,
-  {
-    elapsedMs: () => timer.elapsedMs,
-    praise: () => settings.feedback,
-    onChange: (state) => {
-      save();
-      toolbar.update(state);
-      if (state.status === 'playing') return;
-      timer.pause('finished');
-      // Let the last word fall away before the results replace the board.
-      setTimeout(showResults, 700);
+  const menu = new PauseMenu({
+    onOpen: () => {
+      timer.pause('menu');
+      play.classList.add('is-paused');
     },
-  },
-  initial,
-);
-attachPointerInput(board, game);
-attachKeyboardInput(game, { paused: () => menu.isOpen });
+    onClose: () => {
+      play.classList.remove('is-paused');
+      timer.resume('menu');
+    },
+    onGiveUp: () => game.giveUp(),
+    settings: () => new SettingsPanel(settings, changeSettings).element,
+  });
+  const toolbar = new Toolbar({
+    onMenu: () => menu.open(),
+    onHint: () => game.hint(),
+    onRotate: () => game.rotate(),
+  });
 
-// The timer pauses while the page is hidden (spec §5 Timer); save the time on the way out.
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) {
-    timer.pause('hidden');
-    if (game.playing) save();
-  } else {
-    timer.resume('hidden');
+  function showResults(): void {
+    play.replaceChildren(renderResults(puzzle, game.state));
+    toolbar.element.remove();
   }
-});
-window.addEventListener('pagehide', () => game.playing && save());
-setInterval(() => game.playing && timer.running && save(), 5_000);
 
-const showTime = () =>
-  toolbar.setTime(formatClock(adjustedTime(timer.elapsedMs, game.state.extras.length)));
-setInterval(showTime, 250);
-showTime();
+  const game = new GameController(
+    puzzle,
+    board,
+    status,
+    {
+      elapsedMs: () => timer.elapsedMs,
+      praise: () => settings.feedback,
+      onChange: (state) => {
+        save();
+        toolbar.update(state);
+        if (state.status === 'playing') return;
+        timer.pause('finished');
+        // Let the last word fall away before the results replace the board.
+        setTimeout(showResults, 700);
+      },
+    },
+    initial,
+  );
+  attachPointerInput(board, game);
+  attachKeyboardInput(game, { paused: () => menu.isOpen });
 
-toolbar.update(game.state);
-toolbar.setTimerVisible(settings.showTimer);
-play.append(status.element, board.svg);
-app.append(toolbar.element, play, menu.element);
+  // The timer pauses while the page is hidden (spec §5 Timer); save the time on the way out.
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      timer.pause('hidden');
+      if (game.playing) save();
+    } else {
+      timer.resume('hidden');
+    }
+  });
+  window.addEventListener('pagehide', () => game.playing && save());
+  setInterval(() => game.playing && timer.running && save(), 5_000);
 
-// A finished puzzle reopens straight to its results (decision D7).
-if (!game.playing) {
-  timer.pause('finished');
-  showResults();
+  const showTime = () =>
+    toolbar.setTime(formatClock(adjustedTime(timer.elapsedMs, game.state.extras.length)));
+  setInterval(showTime, 250);
+  showTime();
+
+  toolbar.update(game.state);
+  toolbar.setTimerVisible(settings.showTimer);
+  play.append(status.element, board.svg);
+  app.append(toolbar.element, play, menu.element);
+
+  // A finished puzzle reopens straight to its results (decision D7).
+  if (!game.playing) {
+    timer.pause('finished');
+    showResults();
+  }
+  onSettingsChanged = () => toolbar.setTimerVisible(settings.showTimer);
 }
+
+/** Shown when the puzzle can't be loaded, with a retry (spec §9 Puzzle delivery). */
+function showLoadError(): void {
+  const box = document.createElement('div');
+  box.className = 'load-error';
+  box.setAttribute('role', 'alert');
+  const text = document.createElement('p');
+  text.textContent = t('load.error');
+  const retry = document.createElement('button');
+  retry.type = 'button';
+  retry.className = 'menu-item is-primary';
+  retry.textContent = t('load.retry');
+  retry.addEventListener('click', () => {
+    box.remove();
+    void boot();
+  });
+  box.append(text, retry);
+  app.append(box);
+}
+
+async function boot(): Promise<void> {
+  try {
+    const { puzzle } = await loadDailyPuzzle(localDate());
+    startGame(puzzle);
+  } catch (error) {
+    console.error(error);
+    showLoadError();
+  }
+}
+
+void boot();

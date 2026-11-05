@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page } from './fixtures';
 import { readFileSync } from 'node:fs';
 import type { Puzzle } from '../../src/core';
 
@@ -11,6 +11,7 @@ const puzzle = JSON.parse(
  * insert non-US characters (ą, ė, š …) as text without a keydown, unlike the Lithuanian layout.
  */
 async function typeKeys(page: Page, text: string): Promise<void> {
+  await page.locator('.board').waitFor(); // the puzzle loads asynchronously
   for (const key of text) {
     await page.evaluate((k) => window.dispatchEvent(new KeyboardEvent('keydown', { key: k })), key);
   }
