@@ -8,13 +8,23 @@ import { attachPointerInput } from './game/pointer-input';
 import { FIXTURES } from './game/fixtures';
 import { attachKeyboardInput } from './game/keyboard-input';
 import { StatusLine } from './game/status-line';
+import { renderResults } from './ui/results';
 
 const app = document.querySelector<HTMLElement>('#app')!;
 const puzzle = FIXTURES[0]!;
 
 const status = new StatusLine();
 const board = new BoardView(puzzle);
-const game = new GameController(puzzle, board, status);
+const game = new GameController(puzzle, board, status, {
+  onChange: (state) => {
+    if (state.status === 'playing') return;
+    // Let the last word fall away before the results replace the board.
+    setTimeout(() => {
+      status.element.remove();
+      board.svg.replaceWith(renderResults(puzzle, state));
+    }, 700);
+  },
+});
 attachPointerInput(board, game);
 attachKeyboardInput(game);
 

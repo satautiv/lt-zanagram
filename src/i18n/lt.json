@@ -30,5 +30,10 @@
     "few": "{n} papildomi žodžiai",
     "many": "{n} papildomų žodžių"
   },
-  "status.solved": "Išspręsta!"
+  "status.solved": "Išspręsta!",
+  "results.solvedIn": "Išspręsta per {time}!",
+  "results.gaveUp": "Pasidavėte",
+  "results.todaysWords": "Šios dienos žodžiai",
+  "results.extras": "Papildomi žodžiai",
+  "results.noExtras": "Papildomų žodžių nerasta"
 }

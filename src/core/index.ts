@@ -8,3 +8,4 @@ export * from './typing';
 export * from './hint';
 export * from './obfuscate';
 export * from './words';
+export * from './clock';

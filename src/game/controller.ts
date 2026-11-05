@@ -1,6 +1,7 @@
 import {
   bridgeKey,
   newGame,
+  setElapsed,
   spell,
   submit,
   visibility,
@@ -28,6 +29,8 @@ export interface ControllerOptions {
 export class GameController {
   state: GameState;
   private path: TileIndex[] = [];
+  /** Wall-clock start, until the pausing timer ticket replaces it. */
+  private readonly startedAt: number;
   private onBoard: Visibility;
 
   constructor(
@@ -38,6 +41,7 @@ export class GameController {
     initial: GameState = newGame(puzzle),
   ) {
     this.state = initial;
+    this.startedAt = Date.now() - initial.elapsedMs;
     this.onBoard = visibility(puzzle, initial);
     this.render();
   }
@@ -103,7 +107,8 @@ export class GameController {
       this.clear();
       return null;
     }
-    const { state, result } = submit(this.puzzle, this.state, path);
+    const timed = setElapsed(this.state, Date.now() - this.startedAt);
+    const { state, result } = submit(this.puzzle, timed, path);
     this.state = state;
     this.onBoard = visibility(this.puzzle, state);
     this.feedback(result, path);
