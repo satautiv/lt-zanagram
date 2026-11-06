@@ -1,5 +1,7 @@
 {
   "app.title": "Žodžių tiltai",
+  "tile.label": "raidė {letter}, eilutė {row}, stulpelis {col}",
+  "tile.hinted": "patarimas",
   "status.wordsLeft": {
     "one": "Liko {n} žodis",
     "few": "Liko {n} žodžiai",

@@ -229,3 +229,4 @@ playwright/.cache/
 
 # Word list built from source dictionaries, never committed (spec decision D8)
 data/valid.txt
+.lighthouseci

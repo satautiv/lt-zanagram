@@ -81,6 +81,18 @@ export class GameController {
     );
   }
 
+  /**
+   * A tap or Space on a tile (spec §4 Tap): starts a path, extends it to a bridged neighbour, steps
+   * back onto the previous tile, or submits when it is the last tile again.
+   */
+  tap(tile: TileIndex): void {
+    if (!this.playing || !this.isVisible(tile)) return;
+    const path = this.path;
+    if (path.length > 0 && tile === path.at(-1)) this.commit();
+    else if (path.length > 0 && (tile === path.at(-2) || this.canExtendTo(tile))) this.moveTo(tile);
+    else this.begin(tile);
+  }
+
   begin(tile: TileIndex): void {
     if (!this.playing || !this.isVisible(tile)) return;
     this.setPath([tile]);
