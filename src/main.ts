@@ -24,6 +24,8 @@ import { loadProgress, saveProgress } from './storage/progress';
 import { loadSettings, saveSettings, type Settings } from './storage/settings';
 import { loadStats, saveStats } from './storage/stats';
 import { Store } from './storage/store';
+import { FEATURES } from './features';
+import { Ads } from './ui/ads';
 import { ArchiveCalendar } from './ui/archive';
 import { aboutExtras, howToPlay } from './ui/help';
 import { PauseMenu } from './ui/pause-menu';
@@ -36,6 +38,8 @@ import { t } from './i18n';
 const app = document.querySelector<HTMLElement>('#app')!;
 
 const store = new Store();
+// No ad network yet (deferred past v1): with the flag off, nothing renders and nothing is called.
+const ads = new Ads(FEATURES.ads, null);
 let settings = loadSettings(store);
 
 /** Light mode inverts to an off-white background and light-grey tiles (spec §5). */
@@ -121,6 +125,7 @@ function startGame(puzzle: Puzzle, published: readonly string[]): void {
     onMenu: () => menu.open(),
     onHint: () => game.hint(),
     onRotate: () => game.rotate(),
+    onRemoveAds: ads.enabled ? () => ads.removeAds() : undefined,
   });
 
   function showResults(): void {
@@ -137,6 +142,8 @@ function startGame(puzzle: Puzzle, published: readonly string[]): void {
     });
     play.replaceChildren(results);
     toolbar.element.remove();
+    // The results-screen interstitial hook; `Ads` refuses it unless the puzzle is finished.
+    void ads.interstitial(game.state.status);
   }
 
   const game = new GameController(
@@ -193,6 +200,9 @@ function startGame(puzzle: Puzzle, published: readonly string[]): void {
   toolbar.update(game.state);
   toolbar.setTimerVisible(settings.showTimer);
   play.append(status.element, board.svg);
+  // Banner slot below the board, never over it (spec §10); null while ads are off.
+  const banner = ads.bannerSlot();
+  if (banner) play.append(banner);
   app.append(
     toolbar.element,
     play,

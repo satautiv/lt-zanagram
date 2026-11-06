@@ -9,6 +9,8 @@ const ICONS = {
   // A clockwise arrow around a square.
   rotate:
     '<path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/><rect x="9" y="9" width="6" height="6" rx="1"/>',
+  // A banner crossed out.
+  removeAds: '<rect x="3" y="7" width="18" height="10" rx="2"/><path d="M4 20 20 4"/>',
 };
 
 function iconButton(name: keyof typeof ICONS, label: string): HTMLButtonElement {
@@ -24,11 +26,14 @@ export interface ToolbarActions {
   onMenu: () => void;
   onHint: () => void;
   onRotate: () => void;
+  /** Only while the `ads` flag is on; without it the "Remove ads" slot stays hidden. */
+  onRemoveAds?: () => void;
 }
 
 /**
  * The toolbar above the status line (spec §5). Left: the menu (☰) and the optional timer. Right:
- * Rotate and Hint (a bulb with a badge of hints left). "Remove ads" arrives with the ads ticket.
+ * Rotate, Hint (a bulb with a badge of hints left) and the reserved "Remove ads" slot, hidden
+ * unless ads are on (spec §10).
  */
 export class Toolbar {
   readonly element: HTMLElement;
@@ -65,7 +70,12 @@ export class Toolbar {
     this.hintButton.append(this.badge);
     this.hintButton.addEventListener('click', actions.onHint);
 
-    right.append(rotate, this.hintButton);
+    const removeAds = iconButton('removeAds', t('toolbar.removeAds'));
+    const onRemoveAds = actions.onRemoveAds;
+    removeAds.hidden = onRemoveAds === undefined;
+    if (onRemoveAds) removeAds.addEventListener('click', onRemoveAds);
+
+    right.append(rotate, this.hintButton, removeAds);
     this.element.append(left, right);
   }
 
