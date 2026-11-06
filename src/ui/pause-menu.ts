@@ -7,6 +7,7 @@ export interface PauseMenuActions {
   onClose: () => void;
   onGiveUp: () => void;
   onArchive: () => void;
+  onHowToPlay: () => void;
 }
 
 function button(label: string, className = 'menu-item'): HTMLButtonElement {
@@ -41,12 +42,11 @@ export class PauseMenu {
 
     this.main = document.createElement('div');
     this.main.className = 'menu-items';
-    const soon = (label: string) => {
-      const item = button(label);
-      item.disabled = true;
-      item.title = t('menu.soon');
-      return item;
-    };
+    const howToPlay = button(t('menu.howToPlay'));
+    howToPlay.addEventListener('click', () => {
+      this.close();
+      this.actions.onHowToPlay();
+    });
     const settings = button(t('menu.settings'));
     settings.addEventListener('click', () => this.show('settings'));
     const archive = button(t('menu.archive'));
@@ -58,8 +58,7 @@ export class PauseMenu {
     giveUp.addEventListener('click', () => this.show('confirm'));
     const resume = button(t('menu.resume'), 'menu-item is-primary');
     resume.addEventListener('click', () => this.close());
-    // How to play arrives with the tutorial ticket.
-    this.main.append(soon(t('menu.howToPlay')), settings, archive, giveUp, resume);
+    this.main.append(howToPlay, settings, archive, giveUp, resume);
 
     this.confirm = document.createElement('div');
     this.confirm.className = 'menu-items';

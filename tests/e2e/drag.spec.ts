@@ -8,6 +8,7 @@ const puzzle = JSON.parse(
 ) as Puzzle;
 
 async function tileCenters(page: Page): Promise<{ x: number; y: number }[]> {
+  await page.locator('.board').waitFor(); // the puzzle loads asynchronously
   return page.locator('.tile-face').evaluateAll((faces) =>
     faces.map((face) => {
       const box = face.getBoundingClientRect();

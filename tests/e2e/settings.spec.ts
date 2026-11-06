@@ -68,6 +68,9 @@ test('still plays when storage is blocked', async ({ page }) => {
     });
   });
   await page.goto('./');
+  // Nothing can be remembered, so every visit is a first visit with the tutorial.
+  await page.getByRole('button', { name: 'Praleisti' }).click();
+  await expect(page.locator('.tutorial')).toHaveCount(0);
   await typeWord(page, puzzle.words[0]!.word);
   await expect(page.getByRole('status')).toContainText(/Puiku!|Šaunu!|Gerai!|Liko 8/);
 });

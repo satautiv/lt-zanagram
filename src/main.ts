@@ -25,10 +25,12 @@ import { loadSettings, saveSettings, type Settings } from './storage/settings';
 import { loadStats, saveStats } from './storage/stats';
 import { Store } from './storage/store';
 import { ArchiveCalendar } from './ui/archive';
+import { aboutExtras, howToPlay } from './ui/help';
 import { PauseMenu } from './ui/pause-menu';
 import { renderResults } from './ui/results';
 import { SettingsPanel } from './ui/settings-panel';
 import { Toolbar } from './ui/toolbar';
+import { Tutorial } from './ui/tutorial';
 import { t } from './i18n';
 
 const app = document.querySelector<HTMLElement>('#app')!;
@@ -92,8 +94,15 @@ function startGame(puzzle: Puzzle, published: readonly string[]): void {
       timer.pause('archive');
       archive.open();
     },
+    onHowToPlay: () => {
+      timer.pause('help');
+      howTo.open();
+    },
     settings: () => new SettingsPanel(settings, changeSettings).element,
   });
+  const howTo = howToPlay(() => timer.resume('help'));
+  // The first extra word ever found explains what extras are, once (spec §4).
+  const extraInfo = aboutExtras(() => timer.resume('help'));
   // Picking a day opens it through its link, so archive days can also be bookmarked.
   const archive = new ArchiveCalendar({
     published,
@@ -137,9 +146,14 @@ function startGame(puzzle: Puzzle, published: readonly string[]): void {
     {
       elapsedMs: () => timer.elapsedMs,
       praise: () => settings.feedback,
-      onChange: (state) => {
+      onChange: (state, result) => {
         save();
         toolbar.update(state);
+        if (result?.kind === 'extra' && !settings.extraDialogSeen) {
+          changeSettings({ extraDialogSeen: true });
+          timer.pause('help');
+          extraInfo.open();
+        }
         if (state.status === 'playing') return;
         timer.pause('finished');
         stats = recordFinish(stats, {
@@ -156,7 +170,8 @@ function startGame(puzzle: Puzzle, published: readonly string[]): void {
     initial,
   );
   attachPointerInput(board, game);
-  attachKeyboardInput(game, { paused: () => menu.isOpen });
+  // Keys go to the board only while no menu or dialog is open over it.
+  attachKeyboardInput(game, { paused: () => document.querySelector('dialog[open]') !== null });
 
   // The timer pauses while the page is hidden (spec §5 Timer); save the time on the way out.
   document.addEventListener('visibilitychange', () => {
@@ -178,7 +193,14 @@ function startGame(puzzle: Puzzle, published: readonly string[]): void {
   toolbar.update(game.state);
   toolbar.setTimerVisible(settings.showTimer);
   play.append(status.element, board.svg);
-  app.append(toolbar.element, play, menu.element, archive.element);
+  app.append(
+    toolbar.element,
+    play,
+    menu.element,
+    archive.element,
+    howTo.element,
+    extraInfo.element,
+  );
 
   // A finished puzzle reopens straight to its results (decision D7).
   if (!game.playing) {
@@ -186,6 +208,17 @@ function startGame(puzzle: Puzzle, published: readonly string[]): void {
     showResults();
   }
   onSettingsChanged = () => toolbar.setTimerVisible(settings.showTimer);
+
+  // The first visit opens the tutorial; finishing or skipping it means it never shows again.
+  if (!settings.tutorialDone && game.playing) {
+    timer.pause('tutorial');
+    const tutorial = new Tutorial(() => {
+      changeSettings({ tutorialDone: true });
+      timer.resume('tutorial');
+    });
+    app.append(tutorial.element);
+    tutorial.open();
+  }
 }
 
 /** Shown when the puzzle can't be loaded, with a retry (spec §9 Puzzle delivery). */
