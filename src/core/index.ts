@@ -12,3 +12,6 @@ export * from './words';
 export * from './clock';
 export * from './calendar';
 export * from './stats';
+export * from './random';
+export * from './difficulty';
+export * from './generator';

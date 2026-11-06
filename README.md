@@ -17,4 +17,6 @@ npm run typecheck  # app + DOM-free core
 npm run build      # production build into dist/
 npm run lighthouse # Lighthouse CI: mobile 90+ (needs Chrome)
 npm run wordlists  # rebuild data/required.txt and data/valid.txt from the pinned sources
+npm run generate -- --from 2026-12-01 --days 30 --seed 42   # propose puzzles (needs wordlists)
+npm run puzzle:show -- 2026-12-01                            # print a decoded puzzle
 ```

@@ -93,6 +93,32 @@ export function buildValid({ dictionary, affixes, attested, blocked }: ValidInpu
   return sortWords(valid);
 }
 
+/**
+ * `blocked-forms.txt`: every form (4–16 letters) of every dictionary entry with a blocked form,
+ * plus the blocked words themselves. The generator rejects boards on which any of them traces.
+ */
+export function buildBlockedForms(
+  dictionary: readonly DicEntry[],
+  affixes: Affixes,
+  blocked: ReadonlySet<string>,
+): string[] {
+  const blockedLower = new Set([...blocked].map(toLower));
+  const forms = new Set<string>();
+  for (const word of blocked) {
+    const normalised = normalise(word, VALID_LENGTH);
+    if (normalised !== null) forms.add(normalised);
+  }
+  for (const entry of dictionary) {
+    const expanded = expand(entry, affixes).map((form) => toLower(form));
+    if (!expanded.some((form) => blockedLower.has(form))) continue;
+    for (const form of expanded) {
+      const word = normalise(form, VALID_LENGTH);
+      if (word !== null) forms.add(word);
+    }
+  }
+  return sortWords(forms);
+}
+
 export interface RequiredInput {
   /** Lemma list lines, `lemma<TAB>count`. */
   lemmaList: string;
