@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isIsoDate, monthGrid, msUntilNextDay, pickPuzzleDate } from '../../../src/core';
+import { addDays, isIsoDate, monthGrid, msUntilNextDay, pickPuzzleDate } from '../../../src/core';
 
 const dates = ['2026-11-06', '2026-11-07', '2026-11-09'];
 
@@ -55,5 +55,13 @@ describe('msUntilNextDay', () => {
   it('rolls over the end of a month and a year', () => {
     expect(msUntilNextDay(new Date(2026, 10, 30, 23, 0, 0))).toBe(3_600_000);
     expect(msUntilNextDay(new Date(2026, 11, 31, 23, 30, 0))).toBe(30 * 60_000);
+  });
+});
+
+describe('addDays', () => {
+  it('steps across month and year ends', () => {
+    expect(addDays('2026-11-30', 1)).toBe('2026-12-01');
+    expect(addDays('2026-12-31', 1)).toBe('2027-01-01');
+    expect(addDays('2027-03-01', -1)).toBe('2027-02-28');
   });
 });

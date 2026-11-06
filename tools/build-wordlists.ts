@@ -2,7 +2,7 @@
 // sources and licences in data/LICENSES.md).
 // Usage: npm run wordlists
 //
-// Writes data/required.txt (committed) and data/valid.txt (gitignored), applying
+// Writes data/required.txt (committed), data/valid.txt and data/blocked-forms.txt (gitignored), applying
 // data/blocklist.txt and data/required-overrides.txt. Downloads are cached in data/sources/
 // (gitignored) and checked against their SHA-256, so every run builds the same lists.
 import { createHash } from 'node:crypto';
@@ -11,6 +11,7 @@ import { unzipSync } from 'fflate';
 import { toUpper } from '../src/core';
 import {
   attestedForms,
+  buildBlockedForms,
   buildRequired,
   buildValid,
   parseOverrides,
@@ -97,11 +98,13 @@ const required = buildRequired({
 });
 
 writeFileSync(data('valid.txt'), valid.join('\n') + '\n');
+const blockedForms = buildBlockedForms(dictionary, affixes, blocked);
+writeFileSync(data('blocked-forms.txt'), blockedForms.join('\n') + '\n');
 writeFileSync(data('required.txt'), required.words.join('\n') + '\n');
 
 console.log(`Dictionary entries   ${dictionary.length.toLocaleString('en')}`);
 console.log(`Corpus forms seen ≥ ${MIN_CORPUS_COUNT}× ${attested.size.toLocaleString('en')}`);
-console.log(`Blocklist            ${blocked.size}`);
+console.log(`Blocklist            ${blocked.size} words, ${blockedForms.length} forms`);
 console.log(`Overrides            +${allow.size} −${deny.size}`);
 console.log(`valid.txt            ${valid.length.toLocaleString('en')} forms`);
 console.log(`required.txt         ${required.words.length.toLocaleString('en')} lemmas`);

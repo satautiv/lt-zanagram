@@ -26,6 +26,12 @@ export function isIsoDate(text: string): boolean {
   return date.getFullYear() === y && date.getMonth() === m - 1 && date.getDate() === d;
 }
 
+/** The date `days` after a YYYY-MM-DD date (negative for before), as YYYY-MM-DD. */
+export function addDays(date: string, days: number): string {
+  const [y, m, d] = date.split('-').map(Number) as [number, number, number];
+  return localDate(new Date(y, m - 1, d + days));
+}
+
 /**
  * The days of a month laid out in Monday-first weeks for a calendar, as YYYY-MM-DD strings, with
  * null for the blank cells before the 1st and after the last day. `month` is 1–12.

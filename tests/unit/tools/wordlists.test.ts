@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   attestedForms,
+  buildBlockedForms,
   buildRequired,
   buildValid,
   isCommonWord,
@@ -80,6 +81,15 @@ describe('valid.txt', () => {
   it('keeps attested forms of common words, sorted', () => {
     const valid = buildValid({ dictionary, affixes: aff, attested, blocked: new Set() });
     expect(valid).toEqual(['KURVAS', 'KURVO', 'NAMAS', 'NAMELIS', 'NAMO', 'NAMUI']);
+  });
+
+  it('lists every form of a blocked entry for the generator', () => {
+    expect(buildBlockedForms(dictionary, aff, new Set(['KURVO', 'PYZDA']))).toEqual([
+      'KURVAS',
+      'KURVO',
+      'KURVUI',
+      'PYZDA',
+    ]);
   });
 
   it('leaves out every form of a blocked word', () => {
