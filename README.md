@@ -15,4 +15,6 @@ npm run e2e        # Playwright end-to-end tests (builds and serves the app)
 npm run lint       # ESLint + Prettier check (npm run format to fix)
 npm run typecheck  # app + DOM-free core
 npm run build      # production build into dist/
+npm run lighthouse # Lighthouse CI: mobile 90+ (needs Chrome)
+npm run wordlists  # rebuild data/required.txt and data/valid.txt from the pinned sources
 ```

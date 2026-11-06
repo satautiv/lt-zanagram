@@ -62,7 +62,9 @@ Ranking Hunspell stems by the summed corpus frequency of their forms works, but 
 - Petkevičius, Mindaugas. 2025. _CCLL Lemmatised Frequency Lists_. SITTI, Vytautas Magnus University. CLARIN-LT: <https://hdl.handle.net/20.500.11821/77>
 - 15.18 million tokens; six lists including alphabetic **lemma** frequencies. One 102 MB zip, public, no login.
 - Licence: **CC BY 4.0** (repository page).
-- Not downloaded during research; `build-wordlists` should pin its URL and SHA-256 the same way on first run.
+- Pinned file: `LT_freq_lists.zip` (102 MB), of which `4-LT_lemma_alpha_freq_list.txt` (`lemma<TAB>count`, proper nouns capitalised) is used
+  - URL: <https://clarin-repo.lt/bitstream/handle/20.500.11821/77/LT_freq_lists.zip>
+  - SHA-256: `74cee83b6d8c286856d0d7b20ef6a5e617785948abe71e49de268f8c55f19330`
 
 ## Risks and open points
 

@@ -1,0 +1,46 @@
+# Words never used in puzzles, neither required nor extra (spec §7): vulgar, offensive, slurs and
+# sensitive topics. One word per line, any case. A listed word removes every dictionary entry that
+# produces it, with all of that entry's forms; verbs have one entry per stem, so list the
+# infinitive, present and past (PISTI, PISA, PISO).
+#
+# Starter list seeded by an agent; the author reviews and extends it.
+
+# Vulgar
+bybis
+pyzda
+pizda
+pisti
+pisa
+piso
+kurva
+kekšė
+šūdas
+šikti
+šika
+šiko
+myžti
+myžia
+myžo
+subinė
+
+# Slurs and insults
+pederastas
+pydaras
+negras
+čigonas
+debilas
+kretinas
+
+# Sensitive
+savižudybė
+nusižudyti
+nusižudo
+nusižudė
+prievartauti
+prievartauja
+prievartavo
+išprievartauti
+išprievartauja
+išprievartavo
+pedofilas
+prostitutė

@@ -1,12 +1,13 @@
 # Word list sources and licences
 
-Status: **proposed**, awaiting the author's approval in ticket #27. Research and measurements: [`docs/research/word-sources.md`](../docs/research/word-sources.md).
+Status: **approved** by the author in ticket #27 (2026-11-06). Research and measurements: [`docs/research/word-sources.md`](../docs/research/word-sources.md). The lists are built by `npm run wordlists` (`tools/build-wordlists.ts`), which pins each download by URL and SHA-256.
 
 | File                                    | Built from                                                            | Licence                 |
 | --------------------------------------- | --------------------------------------------------------------------- | ----------------------- |
 | `valid.txt` (gitignored, never shipped) | ispell-lt myspell-lt 1.3.2 ∩ VDU CCLL wordform list 2022              | BSD-3-Clause; CC BY 4.0 |
 | `required.txt`                          | ispell-lt myspell-lt 1.3.2 ∩ VDU CCLL Lemmatised Frequency Lists 2025 | BSD-3-Clause; CC BY 4.0 |
 | `blocklist.txt`                         | Hand-kept by the project                                              | Project's own           |
+| `required-overrides.txt`                | Hand-kept by the project                                              | Project's own           |
 
 Extra-word lists inside puzzle files are derived from `valid.txt` and carry the same attributions.
 
@@ -54,5 +55,7 @@ Reference requested by the authors: Rimkutė E., Kovalevskaitė J., Melninkaitė
 ## CCLL Lemmatised Frequency Lists
 
 Petkevičius, Mindaugas. 2025. _CCLL Lemmatised Frequency Lists_. Institute of Digital Resources and Interdisciplinary Research (SITTI), Vytautas Magnus University. CLARIN-LT, <https://hdl.handle.net/20.500.11821/77>.
+
+File `LT_freq_lists.zip`, of which `4-LT_lemma_alpha_freq_list.txt` is used.
 
 Licence: Creative Commons Attribution 4.0 (CC BY 4.0), <https://creativecommons.org/licenses/by/4.0/>. Used to confirm lemmas and rank them by frequency; modified, not redistributed as is.
