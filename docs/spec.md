@@ -251,7 +251,7 @@ One puzzle per calendar day in the player's local time zone; all progress lives 
 - A day with no published puzzle **freezes** the streak: neither extended nor broken. Playing the fallback "latest available" puzzle never counts as a daily solve.
 - Archive solves don't extend the streak. Giving up the daily puzzle breaks it; giving up an archive puzzle doesn't affect it.
 
-**Sharing** — a short plain-text result such as "Žodžių tiltai, 2026-11-05: 02:04, 2 patarimai, 2 papildomi žodžiai" plus the game URL. Never include the words themselves.
+**Sharing** — a short plain-text result such as "Žodžių tiltai, 2026-11-05: 02:04, 2 patarimai, 2 papildomi žodžiai" plus the game URL. Never include the words themselves. _(decided)_ A given-up puzzle shares "pasiduota" in place of the time, and the URL is the plain game address, not a `#date` link.
 
 **v2 (optional backend, out of scope for v1)** — an anonymous endpoint (e.g. a Cloudflare Worker or Supabase) that collects per-word find times. It enables the reference's "average time" column and the "faster than average" chip. Keep the client working when the endpoint is unreachable.
 

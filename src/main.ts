@@ -115,12 +115,18 @@ function startGame(puzzle: Puzzle, published: readonly string[]): void {
   });
 
   function showResults(): void {
-    const row = {
-      played: stats.played,
-      streak: currentStreak(stats, localDate(), published),
-      solves: stats.solves,
-    };
-    play.replaceChildren(renderResults(puzzle, game.state, row));
+    const results = renderResults(puzzle, game.state, {
+      stats: {
+        played: stats.played,
+        streak: currentStreak(stats, localDate(), published),
+        solves: stats.solves,
+      },
+      // The plain game address, never a #date link: the shared text carries the date already.
+      shareUrl: location.origin + location.pathname,
+      todayUrl: location.pathname,
+      onArchive: () => archive.open(),
+    });
+    play.replaceChildren(results);
     toolbar.element.remove();
   }
 

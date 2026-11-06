@@ -275,6 +275,45 @@ body {
   color: var(--muted);
 }
 
+/* Share button and its confirmation. */
+.share {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.share-message {
+  min-height: 1.4em;
+  margin: 0;
+  color: var(--ok);
+  font-weight: 700;
+  text-align: center;
+}
+
+.share-message.is-error {
+  color: var(--error);
+}
+
+/* "Come back tomorrow": archive link and the countdown to the next puzzle. */
+.come-back {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 16px;
+}
+
+.countdown {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.countdown-ready {
+  color: var(--accent);
+}
+
 /* Toolbar (spec §5): menu and timer left, Rotate and Hint right. */
 .toolbar {
   display: flex;
