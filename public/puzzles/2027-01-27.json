@@ -1,0 +1,116 @@
+{
+  "id": "2027-01-27",
+  "size": 4,
+  "letters": [
+    "S",
+    "E",
+    "S",
+    "I",
+    "U",
+    "M",
+    "I",
+    "N",
+    "E",
+    "L",
+    "G",
+    "K",
+    "Š",
+    "I",
+    "S",
+    "Ū"
+  ],
+  "bridges": [
+    [
+      0,
+      1
+    ],
+    [
+      0,
+      5
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      1,
+      5
+    ],
+    [
+      1,
+      6
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      7
+    ],
+    [
+      4,
+      5
+    ],
+    [
+      4,
+      9
+    ],
+    [
+      5,
+      6
+    ],
+    [
+      5,
+      8
+    ],
+    [
+      6,
+      7
+    ],
+    [
+      6,
+      11
+    ],
+    [
+      8,
+      9
+    ],
+    [
+      8,
+      12
+    ],
+    [
+      9,
+      10
+    ],
+    [
+      9,
+      13
+    ],
+    [
+      10,
+      13
+    ],
+    [
+      10,
+      15
+    ],
+    [
+      11,
+      15
+    ],
+    [
+      12,
+      13
+    ],
+    [
+      13,
+      14
+    ]
+  ],
+  "difficulty": 5,
+  "author": "generator",
+  "version": 1,
+  "secret": "AVZNXUJWRA8KalYQQBUGXhAKEHBkfGRge3kzJxgeEkJWWVgTF2kGSlgLARwLGxkcBAEEG01YCR4CbxsPVFRLW1kTAFNdXhAND3VCTFxDEwcaRl9eXg1eREISRxsCU0D1k15MRUIWElkPG15HV1xCXh4TUB5MWANVQFQQDQ959I13ejM6c2ESHhVdUUVFEA0hRQkeAQAbFRwEAQQbTVgJHgJvGw9UVEtbWRMAU11eEA0PY0ReW12+7UkSQ0cXXkVFX1tcDwdTUxBdRUpRX0ISXAgVT1hfRlZGUR8PTxsBVk1dQlYVFxJiaHt6PzhzYRIeFV1RRUUQDSFGFgMcBBsYHAkBCxtLRxYDBG8bD1RUS1tZEwBTXV4QDQ9yUEddRb/HGkFFQV5fWV9GW1obBxpBVVxYR19bSBJ7ExFOR0ZdXUgeE1AeTFgDVUBUEA0PdWJge3kzJxgeEkJWWVgTF2kGVkQWBxwEGxocAgEAalZWXldWW1lERFhCXBVAVmlEUUBVRFFEXltWCVgaQlFVRUReVURcXglaGE8cSRVaX0NJEA1YsZp7fGd6ZH54fhAbWARbRlgQDXYBAwEDBFZNFgYcBxsbHAYBARtIKRYQVFdRRF5YWVtYFFYAEGNHRERa9bRBFwkBGkZVX0dIQlBZ95wIFRpbQhJcTEL0jPa6EwEUEE0eTA9HXl9WFUBWcXt1f3JheWIPHhUKFU5aEghsHAEdGx4GVkEWChwLGxwDHRwGalZWXldWW1lERFhCXBVAVnRXVFtTSFxYXhJWCgBMV0JGVl4QQUFdQxsHGkJCW1INXlBAXRlYCRZJEkVYX1QTFxDy0D9zfHlhFQESQUxGX1hOYQMFHgYcHAcBBRtJWAhvHBBTSFZYQ1tDExtUEAoQZFhDWEf2rglUSUcQV1xCXl5AW1wbVFtAEPecRllEAxBKVg8YRV9AUw8KE2b3nT09aRAcEEdMRFkPCGxLRRYDBR4GHRwAHh4GTikWEFRXUUReWFlbWBRWABB3V1hAVUVfW1kTBxpZ9ZlZTEMRXkcXGwRMU1xbQg1AUEpAXhQQTxJZQBdeXVBEVVYWHU8cEk8bVhJGQkBTWE4Y95p1e2RjEwEQRxsAUhAKaQYYHAAdHg5WRQkeAQZqARJVSFReFB1OW19cFRcSe0xHWRsHGlNFVVZBXxFeRl4fFl9eWUEZD00dVhBAFQZeEAoQ8od3eH4QG1gEW0ZYEA12AQQBAwdWRQkeAQZqARJVSFReFB1OW19cFRcS9JBfWB0VT0EQU0JG9ZBZW0RUVkdvHBBSVURDTEEVQC8Yd3l8fg8cE2h7eTMnGB4Sd2RgdRMBEHIpOXN8eRAbD3d4YXcVVlZ9e3xnFQESdmR+YjcxGB4SdX5hZXxkfH5YWBh1fHtkDxwTZntyNzEYHhJ5fmh9dGF7FVZWcXt1f2IPHBNme3opVhYQe3t6eBIdD3l+ND0YHhJ5fmN5Yg8eFTGxkHV5EBsPfHRgdxVWVnZ3fXsVARJ9aH9kWFgYfnV/Yg8cE2B3ey9WFhB9d2RkEh0Pf340PRgeEn9iYXUTARBkPz13dxIeFX51eGBnFVZWaXd9exUBEmJof2RYWBhhfXd+ZhIdD/eXMzh/EBwQ8o15fXgQG1ixmnt8Z3pkfngPHhW/3nF7fRAbD/WbZnt6L1YWEPWYfGR+eA9vSg=="
+}

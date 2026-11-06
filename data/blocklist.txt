@@ -30,6 +30,7 @@ negras
 čigonas
 debilas
 kretinas
+kalė
 
 # Sensitive
 savižudybė

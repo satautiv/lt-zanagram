@@ -15,6 +15,7 @@
     "puzzles:index": "tsx tools/puzzles-index.ts",
     "icons": "tsx tools/icons.ts",
     "generate": "tsx tools/generate.ts",
+    "definitions": "tsx tools/definitions.ts",
     "lighthouse": "lhci autorun",
     "wordlists": "tsx tools/build-wordlists.ts"
   },
