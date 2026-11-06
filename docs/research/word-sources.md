@@ -66,6 +66,10 @@ Ranking Hunspell stems by the summed corpus frequency of their forms works, but 
   - URL: <https://clarin-repo.lt/bitstream/handle/20.500.11821/77/LT_freq_lists.zip>
   - SHA-256: `74cee83b6d8c286856d0d7b20ef6a5e617785948abe71e49de268f8c55f19330`
 
+## Correction found while building (2026-11-06)
+
+The CCLL 2022 wordform list has almost no forms with **Ž**: its build script (readme step 1) ran `grep -v '[^a-z]'`, which dropped them, and the few left have Ž turned into Ū (`ūmogus 38`, no `žmogus`). The first `valid.txt` therefore had no Ž words, and no Ž lemma could be required. `build-wordlists` now also reads the 2025 package's `3-LT_alpha_wordform_freq_list.txt` (same approved source and licence) and accepts a form seen ≥ 2 times in either list (counts are not summed across lists). Result: 614,809 forms, 60,207 of them with Ž.
+
 ## Risks and open points
 
 1. **Licence wording mismatch on the wordform list** (CC BY 4.0 on the page, CLARIN-LT PUB in the readme). Both need attribution only, and the default PUB licence has no non-commercial condition, so the ads planned for later are fine under either reading. CLARIN-LT's general terms mention non-commercial use of _the repository service_, not of downloaded items. If you want certainty before showing ads, a one-line email to CLARIN-LT (clarin-lt.lt) asking which licence applies would settle it. It isn't needed before building.

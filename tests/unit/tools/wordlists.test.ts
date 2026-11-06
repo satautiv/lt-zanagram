@@ -66,9 +66,10 @@ describe('word filters', () => {
     expect(isCommonWord('pvz.')).toBe(false);
   });
 
-  it('keeps corpus forms seen often enough', () => {
-    const corpus = 'namas 120\r\nnamo 2\r\nnamui 1\r\n';
-    expect([...attestedForms(corpus, 2)]).toEqual(['namas', 'namo']);
+  it('keeps forms seen often enough in any one list, case folded, never summed across', () => {
+    const old = 'namas 120\r\nnamo 2\r\nnamui 1\r\nnamams 1\r\nnamelio 1\r\n';
+    const recent = 'žmogus\t5\nŽmogus\t3\nnamams\t1\nkas\t9\nrock-n-rolas\t4\n';
+    expect([...attestedForms([old, recent], 2)].sort()).toEqual(['namas', 'namo', 'žmogus'].sort());
   });
 });
 

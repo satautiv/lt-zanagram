@@ -29,10 +29,14 @@
 -tavasis
 -toks
 -visas
+-visoks
 -viskas
 -kiek
 -tiek
 -keli
+-kažkas
+-kažkoks
+-kažkuris
 
 # Conjunctions
 -arba
@@ -53,6 +57,8 @@
 -tačiau
 -todėl
 -dargi
+-užtat
+-užuot
 -nelyginant
 -nelygu
 
@@ -90,12 +96,15 @@
 -atseit
 -beje
 -bene
+-bemaž
 -bent
 -berods
 -betgi
 -būtent
 -galbūt
 -irgi
+-kaži
+-kažin
 -kone
 -matyt
 -nagi

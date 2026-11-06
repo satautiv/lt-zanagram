@@ -29,16 +29,33 @@ export function readWordLines(text: string): string[] {
     .filter((line) => line !== '');
 }
 
+/** Lower-case Lithuanian letters only: anything else can never be a valid form. */
+const LOWER_WORD = /^[aąbcčdeęėfghiįyjklmnoprsštuųūvzž]+$/u;
+
 /**
- * Corpus forms seen at least `minCount` times, as they appear (lower case, NFC). Lines are
- * `form count`. Kept in the corpus's own case so the expander can test its lower-case forms
- * before paying for upper-casing.
+ * Corpus forms seen at least `minCount` times in any one of the frequency lists, in lower case
+ * (NFC). Lines are `form count` or `form<TAB>count`; case is folded within a list, so
+ * sentence-initial capitals count too. Counts are not added across lists, so two one-off
+ * sightings (usually typos) don't make a form.
+ *
+ * Several lists, because the CCLL 2022 wordform list lost almost every form with Ž: its build
+ * script filtered lines with `grep -v '[^a-z]'` (see its readme), and the few survivors have Ž
+ * turned into Ū ("ūmogus"). The 2025 package's wordform list has them.
  */
-export function attestedForms(text: string, minCount: number): Set<string> {
+export function attestedForms(lists: readonly string[], minCount: number): Set<string> {
   const forms = new Set<string>();
-  for (const line of text.split(/\r?\n/)) {
-    const [form, count] = line.trim().split(/\s+/);
-    if (form !== undefined && Number(count) >= minCount) forms.add(form.normalize('NFC'));
+  for (const text of lists) {
+    const counts = new Map<string, number>();
+    for (const line of text.split(/\r?\n/)) {
+      const [raw, count] = line.trim().split(/\s+/);
+      if (raw === undefined || count === undefined) continue;
+      const form = toLower(raw);
+      const length = [...form].length;
+      if (length < VALID_LENGTH.min || length > VALID_LENGTH.max || !LOWER_WORD.test(form))
+        continue;
+      counts.set(form, (counts.get(form) ?? 0) + Number(count));
+    }
+    for (const [form, count] of counts) if (count >= minCount) forms.add(form);
   }
   return forms;
 }
