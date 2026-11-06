@@ -1,5 +1,6 @@
 {
   "app.title": "Žodžių tiltai",
+  "playtest.title": "Bandomasis žaidimas",
   "tile.label": "raidė {letter}, eilutė {row}, stulpelis {col}",
   "tile.hinted": "patarimas",
   "status.wordsLeft": {

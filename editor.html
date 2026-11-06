@@ -13,8 +13,12 @@
       <button id="load-date" type="button">Load date</button>
       <label class="file">Load file <input id="load-file" type="file" accept=".json" /></label>
       <button id="new" type="button">New</button>
+      <label>Seed <input id="seed" type="text" size="6" value="1" /></label>
+      <button id="generate" type="button">Generate</button>
       <label>Author <input id="author" type="text" size="12" /></label>
-      <button id="export" type="button" class="primary">Export JSON</button>
+      <button id="playtest" type="button">Playtest</button>
+      <button id="save" type="button" class="primary">Save</button>
+      <button id="export" type="button">Export JSON</button>
       <span id="message" role="status"></span>
     </header>
     <main class="layout">
@@ -28,6 +32,7 @@
         <div id="warnings" class="warnings"></div>
       </section>
       <section>
+        <div id="calendar" class="calendar"></div>
         <h2>Words <small id="lists">loading word lists…</small></h2>
         <ul id="words" class="words"></ul>
       </section>

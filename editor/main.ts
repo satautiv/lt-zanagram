@@ -1,5 +1,6 @@
 // The authoring tool (spec §8): a dev-only page, /editor.html, served by `npm run dev` and left out
-// of the production build. Edit a board, tick required words, write definitions, export JSON.
+// of the production build. Pick a day on the calendar, generate or edit its board, tick required
+// words, write definitions, playtest, then save it to public/puzzles or export JSON.
 import '@fontsource/nunito/latin-800.css';
 import '@fontsource/nunito/latin-ext-800.css';
 import './editor.css';
@@ -9,12 +10,18 @@ import {
   colOf,
   encodePuzzle,
   isLetter,
+  monthGrid,
+  PuzzleGenerator,
   readPuzzle,
   rowOf,
+  seededRandom,
   toUpper,
   WordList,
+  type Puzzle,
   type TileIndex,
 } from '../src/core';
+import { offerPlaytest } from '../src/game/playtest';
+import { EDITOR_SAVE_PATH } from './save-path';
 import {
   analyse,
   emptyDraft,
@@ -62,6 +69,12 @@ let lists: Lists = { valid: new WordList([]) };
 let analysis: Analysis = analyse(draft, lists);
 let selected: TileIndex | null = 0;
 let highlighted: readonly TileIndex[] = [];
+/** Published days (index.json), for the calendar. */
+let published = new Map<string, number>();
+let month = { year: 0, month: 0 };
+let generator: PuzzleGenerator | null = null;
+
+const puzzleUrl = (date: string) => `${import.meta.env.BASE_URL}puzzles/${date}.json`;
 
 function tomorrow(): string {
   const date = new Date();
@@ -227,10 +240,140 @@ function renderWords(): void {
   list.replaceChildren(...items);
 }
 
+// --- Calendar: which days have puzzles; pick one to load or start it ----------------------------
+
+const MONTH = new Intl.DateTimeFormat('lt-LT', { year: 'numeric', month: 'long' });
+
+function renderCalendar(): void {
+  if (month.year === 0) {
+    const [y, m] = draft.id.split('-').map(Number);
+    month = { year: y ?? 2026, month: m ?? 1 };
+  }
+  const step = (delta: number) => {
+    const date = new Date(month.year, month.month - 1 + delta, 1);
+    month = { year: date.getFullYear(), month: date.getMonth() + 1 };
+    renderCalendar();
+  };
+  const previous = html('button', { type: 'button', title: 'Previous month' }, '‹');
+  const next = html('button', { type: 'button', title: 'Next month' }, '›');
+  previous.addEventListener('click', () => step(-1));
+  next.addEventListener('click', () => step(1));
+  const title = html('strong', {}, MONTH.format(new Date(month.year, month.month - 1, 1)));
+  const count = html('small', {}, `${published.size} puzzles in public/puzzles`);
+
+  const grid = html('div', { className: 'calendar-grid' });
+  for (const day of ['Pr', 'An', 'Tr', 'Kt', 'Pn', 'Št', 'Sk']) grid.append(html('span', {}, day));
+  for (const week of monthGrid(month.year, month.month)) {
+    for (const date of week) {
+      if (date === null) {
+        grid.append(html('span'));
+        continue;
+      }
+      const difficulty = published.get(date);
+      const cell = html('button', { type: 'button', title: date }, String(Number(date.slice(8))));
+      cell.dataset.date = date;
+      if (difficulty !== undefined) {
+        cell.classList.add('has-puzzle');
+        cell.append(html('small', {}, String(difficulty)));
+      }
+      if (date === draft.id) cell.classList.add('is-current');
+      cell.addEventListener('click', () => void openDate(date));
+      grid.append(cell);
+    }
+  }
+  $<HTMLElement>('#calendar').replaceChildren(
+    html('div', { className: 'calendar-head' }, previous, title, next, count),
+    grid,
+  );
+}
+
+async function loadIndex(): Promise<void> {
+  const response = await fetch(`${import.meta.env.BASE_URL}puzzles/index.json`, {
+    cache: 'no-store',
+  });
+  const index = response.ok
+    ? ((await response.json()) as { date: string; difficulty: number }[])
+    : [];
+  published = new Map(index.map((e) => [e.date, e.difficulty]));
+  renderCalendar();
+}
+
+async function fetchPuzzle(date: string): Promise<Puzzle | null> {
+  const response = await fetch(puzzleUrl(date), { cache: 'no-store' });
+  return response.ok ? readPuzzle(await response.json()) : null;
+}
+
+/** A published day loads; any other day starts an empty board for that date. */
+async function openDate(date: string): Promise<void> {
+  const puzzle = published.has(date) ? await fetchPuzzle(date) : null;
+  selected = 0;
+  if (puzzle) {
+    update(fromPuzzle(puzzle));
+    setMessage(`Loaded ${date}`);
+  } else {
+    update({ ...emptyDraft(date), author: draft.author });
+    setMessage(`New board for ${date}`);
+  }
+}
+
+// --- Generate, playtest, save --------------------------------------------------------------------
+
+/** Words required on other published days, so a generated board doesn't repeat them (as the CLI). */
+async function wordsOnOtherDays(): Promise<Set<string>> {
+  const others = [...published.keys()].filter((date) => date !== draft.id);
+  const puzzles = await Promise.all(others.map(fetchPuzzle));
+  return new Set(puzzles.flatMap((p) => p?.words.map((w) => w.word) ?? []));
+}
+
+$<HTMLButtonElement>('#generate').addEventListener('click', async () => {
+  if (!generator) {
+    setMessage('Word lists are still loading');
+    return;
+  }
+  const seed = $<HTMLInputElement>('#seed').value.trim() || '1';
+  setMessage('Generating…');
+  const avoid = await wordsOnOtherDays();
+  // The same seeding as `npm run generate`, so a seed gives the same board in both.
+  const result = generator.generate({
+    id: draft.id,
+    random: seededRandom(`${seed}:${draft.id}`),
+    avoid,
+    author: draft.author || undefined,
+  });
+  if (!result) {
+    setMessage(`No board passed the checks for seed ${seed}; try another seed`);
+    return;
+  }
+  selected = 0;
+  update(fromPuzzle(result.puzzle));
+  setMessage(`Generated ${draft.id} with seed ${seed}`);
+});
+
+$<HTMLButtonElement>('#playtest').addEventListener('click', () => {
+  offerPlaytest(analysis.puzzle);
+  window.open(`${import.meta.env.BASE_URL}?playtest`, '_blank');
+});
+
+$<HTMLButtonElement>('#save').addEventListener('click', async () => {
+  const response = await fetch(EDITOR_SAVE_PATH, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(encodePuzzle(analysis.puzzle)),
+  });
+  const result = (await response.json()) as { saved?: string; error?: string };
+  if (!response.ok) {
+    setMessage(`Not saved: ${result.error ?? response.status}`);
+    return;
+  }
+  setMessage(`Saved public/puzzles/${result.saved}.json`);
+  await loadIndex();
+});
+
 function render(): void {
   renderBoard();
   renderStatus();
   renderWords();
+  renderCalendar();
   $<HTMLInputElement>('#date').value = draft.id;
   $<HTMLInputElement>('#author').value = draft.author;
 }
@@ -281,7 +424,7 @@ function loadPuzzle(raw: unknown): void {
 
 $<HTMLButtonElement>('#load-date').addEventListener('click', async () => {
   const date = $<HTMLInputElement>('#date').value;
-  const response = await fetch(`${import.meta.env.BASE_URL}puzzles/${date}.json`);
+  const response = await fetch(puzzleUrl(date), { cache: 'no-store' });
   if (!response.ok) {
     setMessage(`No puzzle for ${date}`);
     return;
@@ -295,6 +438,7 @@ $<HTMLInputElement>('#load-file').addEventListener('change', async (event) => {
 });
 
 $<HTMLInputElement>('#date').addEventListener('change', (event) => {
+  month = { year: 0, month: 0 };
   update({ ...draft, id: (event.target as HTMLInputElement).value });
 });
 
@@ -340,8 +484,14 @@ async function loadLists(): Promise<void> {
     wordFile('required.txt'),
     wordFile('blocked-forms.txt'),
   ]);
+  const validList = new WordList(valid ?? required ?? []);
+  generator = new PuzzleGenerator({
+    required: required ?? [],
+    valid: validList,
+    blocked: new WordList(blocked ?? []),
+  });
   lists = {
-    valid: new WordList(valid ?? required ?? []),
+    valid: validList,
     requiredWords: required ? new Set(required) : undefined,
     blocked: blocked ? new WordList(blocked) : undefined,
   };
@@ -353,3 +503,4 @@ async function loadLists(): Promise<void> {
 
 render();
 void loadLists();
+void loadIndex();
