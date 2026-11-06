@@ -18,6 +18,7 @@ import { GameController } from './game/controller';
 import { attachKeyboardInput } from './game/keyboard-input';
 import { attachPointerInput } from './game/pointer-input';
 import { attachTileFocus } from './game/tile-focus';
+import { isPlaytest, playtestPuzzle, playtestStore } from './game/playtest';
 import { loadPuzzleFor, puzzleFiles } from './game/puzzle-source';
 import { StatusLine } from './game/status-line';
 import { Timer } from './game/timer';
@@ -39,7 +40,8 @@ import { registerServiceWorker } from './pwa';
 
 const app = document.querySelector<HTMLElement>('#app')!;
 
-const store = new Store();
+const playtest = isPlaytest();
+const store = playtest ? playtestStore() : new Store();
 // No ad network yet (deferred past v1): with the flag off, nothing renders and nothing is called.
 const ads = new Ads(FEATURES.ads, null);
 let settings = loadSettings(store);
@@ -254,6 +256,13 @@ function showLoadError(): void {
 }
 
 async function boot(): Promise<void> {
+  if (playtest) {
+    // An editor board in the real game UI, saving nothing (spec §8 Playtest).
+    document.title = `${t('playtest.title')}: ${document.title}`;
+    const puzzle = playtestPuzzle();
+    startGame(puzzle, [puzzle.id]);
+    return;
+  }
   try {
     const requested = decodeURIComponent(location.hash.slice(1));
     const { puzzle, published } = await loadPuzzleFor(

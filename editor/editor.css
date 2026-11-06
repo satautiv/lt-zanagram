@@ -220,3 +220,62 @@ button.primary {
 .word .definition {
   flex: 1 1 100%;
 }
+
+/* Calendar: published days filled, with their difficulty; the open day outlined. */
+.calendar {
+  max-width: 420px;
+  margin-bottom: 16px;
+}
+
+.calendar-head {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.calendar-head strong {
+  min-width: 10em;
+  text-align: center;
+}
+
+.calendar-head small {
+  color: var(--muted);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+
+.calendar-grid > span {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.calendar-grid button {
+  position: relative;
+  padding: 6px 0;
+  background: transparent;
+  border-color: #333;
+}
+
+.calendar-grid button.has-puzzle {
+  background: var(--tile);
+  border-color: #6b665d;
+  font-weight: 700;
+}
+
+.calendar-grid button small {
+  position: absolute;
+  right: 3px;
+  bottom: 1px;
+  font-size: 0.65rem;
+  color: var(--muted);
+}
+
+.calendar-grid button.is-current {
+  outline: 2px solid var(--accent);
+}
