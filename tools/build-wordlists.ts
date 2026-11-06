@@ -68,14 +68,19 @@ function unzipText(zip: Uint8Array, path: string): string {
 const hunspell = await download(SOURCES.hunspell);
 const affixes = parseAff(unzipText(hunspell, 'myspell-lt-1.3.2/lt_LT.aff'));
 const dictionary = parseDic(unzipText(hunspell, 'myspell-lt-1.3.2/lt_LT.dic'));
+const lemmaZip = await download(SOURCES.lemmas);
 const attested = attestedForms(
-  unzipText(
-    await download(SOURCES.wordforms),
-    'CCLL-Wordlists-2022/byalphabet-2022/freq-visas-abc.txt',
-  ),
+  [
+    unzipText(
+      await download(SOURCES.wordforms),
+      'CCLL-Wordlists-2022/byalphabet-2022/freq-visas-abc.txt',
+    ),
+    // The 2022 list lacks nearly every form with Ž; this one has them (see attestedForms).
+    unzipText(lemmaZip, '3-LT_alpha_wordform_freq_list.txt'),
+  ],
   MIN_CORPUS_COUNT,
 );
-const lemmaList = unzipText(await download(SOURCES.lemmas), '4-LT_lemma_alpha_freq_list.txt');
+const lemmaList = unzipText(lemmaZip, '4-LT_lemma_alpha_freq_list.txt');
 
 const blocked = new Set(readWordLines(readFileSync(data('blocklist.txt'), 'utf8')).map(toUpper));
 const { allow, deny } = parseOverrides(readFileSync(data('required-overrides.txt'), 'utf8'));
