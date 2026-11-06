@@ -41,3 +41,9 @@ export function monthGrid(year: number, month: number): (string | null)[][] {
   for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
   return weeks;
 }
+
+/** Time left until the next local midnight, when the next daily puzzle opens (spec §5 Results). */
+export function msUntilNextDay(now: Date = new Date()): number {
+  const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  return midnight.getTime() - now.getTime();
+}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isIsoDate, monthGrid, pickPuzzleDate } from '../../../src/core';
+import { isIsoDate, monthGrid, msUntilNextDay, pickPuzzleDate } from '../../../src/core';
 
 const dates = ['2026-11-06', '2026-11-07', '2026-11-09'];
 
@@ -42,5 +42,18 @@ describe('monthGrid', () => {
 
   it('handles February in a leap year', () => {
     expect(monthGrid(2028, 2).flat().filter(Boolean)).toHaveLength(29);
+  });
+});
+
+describe('msUntilNextDay', () => {
+  it('counts down to the next local midnight', () => {
+    expect(msUntilNextDay(new Date(2026, 10, 6, 12, 0, 0))).toBe(12 * 3_600_000);
+    expect(msUntilNextDay(new Date(2026, 10, 6, 23, 59, 59, 500))).toBe(500);
+    expect(msUntilNextDay(new Date(2026, 10, 6, 0, 0, 0))).toBe(24 * 3_600_000);
+  });
+
+  it('rolls over the end of a month and a year', () => {
+    expect(msUntilNextDay(new Date(2026, 10, 30, 23, 0, 0))).toBe(3_600_000);
+    expect(msUntilNextDay(new Date(2026, 11, 31, 23, 30, 0))).toBe(30 * 60_000);
   });
 });
