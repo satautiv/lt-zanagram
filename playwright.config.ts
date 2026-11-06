@@ -8,6 +8,8 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:4173/lt-zanagram/',
     trace: 'on-first-retry',
+    // A service worker would serve requests past page.route mocks; offline.spec.ts opts back in.
+    serviceWorkers: 'block',
   },
   projects: [
     { name: 'desktop', use: { ...devices['Desktop Chrome'] } },

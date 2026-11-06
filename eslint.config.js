@@ -10,6 +10,11 @@ export default tseslint.config(
     languageOptions: { globals: { ...globals.browser, ...globals.node } },
   },
   {
+    // The service worker runs in its own global scope, without a DOM.
+    files: ['src/sw/**/*.ts'],
+    languageOptions: { globals: { ...globals.serviceworker } },
+  },
+  {
     // The rules engine must run without a DOM (spec §10).
     files: ['src/core/**/*.ts'],
     languageOptions: { globals: { ...globals.es2022 } },

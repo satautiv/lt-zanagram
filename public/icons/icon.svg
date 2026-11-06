@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Tiles stay inside the maskable safe zone (a circle of radius 205 around the centre). -->
+  <rect width="512" height="512" fill="#141414"/>
+  <rect x="112" y="112" width="132" height="132" rx="26" fill="#4169e1"/>
+  <rect x="268" y="112" width="132" height="132" rx="26" fill="#2e2c29"/>
+  <rect x="112" y="268" width="132" height="132" rx="26" fill="#2e2c29"/>
+  <rect x="268" y="268" width="132" height="132" rx="26" fill="#4169e1"/>
+  <g font-family="Nunito, system-ui, sans-serif" font-weight="800" font-size="104" text-anchor="middle" fill="#f2efe9">
+    <text x="178" y="216">Ž</text>
+    <text x="334" y="372">T</text>
+  </g>
+</svg>
