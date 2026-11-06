@@ -342,6 +342,10 @@ body {
   cursor: pointer;
 }
 
+.icon-button[hidden] {
+  display: none;
+}
+
 .icon-button:hover:not(:disabled) {
   background: var(--tile);
 }
@@ -418,6 +422,13 @@ body {
 
 .play.is-paused {
   filter: blur(8px);
+}
+
+/* Ad banner slot below the board (spec §10): fixed height so it never shifts or covers the board. */
+.ad-banner {
+  flex: none;
+  height: 60px;
+  overflow: hidden;
 }
 
 .pause-menu {
