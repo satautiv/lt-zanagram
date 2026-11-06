@@ -1,4 +1,13 @@
-import { bridgeKey, colOf, pathBridges, rowOf, type Puzzle, type TileIndex } from '../core';
+import {
+  bridgeKey,
+  colOf,
+  pathBridges,
+  rowOf,
+  shownPosition,
+  type Puzzle,
+  type TileIndex,
+} from '../core';
+import { t } from '../i18n';
 
 const SVG = 'http://www.w3.org/2000/svg';
 
@@ -45,9 +54,14 @@ export class BoardView {
   private readonly bridges = new Map<string, SVGLineElement>();
   private readonly letters: SVGTextElement[] = [];
   private readonly rotor: SVGGElement;
+  private readonly letterOf: readonly string[];
+  private hinted = new Set<TileIndex>();
+  /** Quarter turns shown; keeps growing (see `setRotation`). */
+  turns = 0;
 
   constructor(puzzle: Puzzle) {
     this.size = puzzle.size;
+    this.letterOf = [...puzzle.letters];
     const extent = this.extent();
     this.svg = el('svg', {
       class: 'board',
@@ -77,7 +91,14 @@ export class BoardView {
     puzzle.letters.forEach((letter, tile) => {
       const { x, y } = this.center(tile);
       const outer = el('g', { transform: `translate(${x} ${y})`, 'data-tile': tile });
-      const inner = el('g', { class: 'tile' });
+      // Tiles are focusable buttons (spec §10 Accessibility); one at a time is in the tab order.
+      const inner = el('g', {
+        class: 'tile',
+        role: 'button',
+        tabindex: tile === 0 ? 0 : -1,
+        'aria-pressed': 'false',
+      });
+      inner.append(el('circle', { class: 'tile-focus', r: TILE / 2 + 9 }));
       inner.append(el('circle', { class: 'tile-ring', r: TILE / 2 + 4 }));
       inner.append(el('circle', { class: 'tile-face', r: TILE / 2 }));
       const text = el('text', { class: 'tile-letter', 'text-anchor': 'middle', dy: '0.35em' });
@@ -92,6 +113,46 @@ export class BoardView {
     this.rotor = el('g', { class: 'rotor' });
     this.rotor.append(bridgeLayer, tileLayer);
     this.svg.append(this.rotor);
+    this.label();
+  }
+
+  /** The tile an element belongs to, if any. */
+  tileOf(target: EventTarget | null): TileIndex | null {
+    const index = this.tiles.indexOf(target as SVGGElement);
+    return index === -1 ? null : index;
+  }
+
+  /** Moves keyboard focus to a tile and makes it the one in the tab order. */
+  focus(tile: TileIndex): void {
+    const node = this.tiles[tile];
+    if (!node) return;
+    for (const other of this.tiles) if (other !== node) other.setAttribute('tabindex', '-1');
+    node.setAttribute('tabindex', '0');
+    node.focus();
+  }
+
+  private nearestVisible(from: TileIndex, visible: ReadonlySet<TileIndex>): TileIndex {
+    let best = -1;
+    let bestDistance = Infinity;
+    for (const tile of visible) {
+      const distance =
+        Math.abs(rowOf(this.size, tile) - rowOf(this.size, from)) +
+        Math.abs(colOf(this.size, tile) - colOf(this.size, from));
+      if (distance < bestDistance) [best, bestDistance] = [tile, distance];
+    }
+    return best;
+  }
+
+  /** "raidė Š, eilutė 2, stulpelis 3", by where the tile shows now; hinted tiles say so. */
+  private label(): void {
+    this.tiles.forEach((node, tile) => {
+      const { row, col } = shownPosition(this.size, tile, this.turns);
+      const base = t('tile.label', { letter: this.letterOf[tile]!, row: row + 1, col: col + 1 });
+      node.setAttribute(
+        'aria-label',
+        this.hinted.has(tile) ? `${base}, ${t('tile.hinted')}` : base,
+      );
+    });
   }
 
   /** Width and height of the board in SVG units. */
@@ -145,6 +206,8 @@ export class BoardView {
    * clockwise.
    */
   setRotation(turns: number): void {
+    this.turns = turns;
+    this.label();
     this.rotor.style.transform = `rotate(${turns * 90}deg)`;
     for (const letter of this.letters) letter.style.transform = `rotate(${-turns * 90}deg)`;
   }
@@ -152,11 +215,33 @@ export class BoardView {
   update(state: BoardViewState): void {
     const selected = new Set(state.selected);
     const hinted = new Set(state.hinted);
+    const focused = this.tileOf(document.activeElement);
     this.tiles.forEach((tile, index) => {
-      tile.classList.toggle('is-gone', !state.visibleTiles.has(index));
+      const gone = !state.visibleTiles.has(index);
+      tile.classList.toggle('is-gone', gone);
       tile.classList.toggle('is-selected', selected.has(index));
       tile.classList.toggle('is-hinted', hinted.has(index) && !selected.has(index));
+      tile.setAttribute('aria-pressed', String(selected.has(index)));
+      if (gone) {
+        tile.setAttribute('aria-hidden', 'true');
+        tile.setAttribute('tabindex', '-1');
+      }
     });
+    if (this.hinted.size !== hinted.size) {
+      this.hinted = hinted;
+      this.label();
+    }
+    // Keep one visible tile in the tab order; a focused tile that just went hands focus on.
+    const visible = state.visibleTiles;
+    let inOrder = this.tiles.findIndex((tile) => tile.getAttribute('tabindex') === '0');
+    if (!visible.has(inOrder)) {
+      inOrder = this.nearestVisible(inOrder === -1 ? 0 : inOrder, visible);
+      if (inOrder !== -1) this.tiles[inOrder]!.setAttribute('tabindex', '0');
+    }
+    if (focused !== null && !visible.has(focused)) {
+      const next = this.nearestVisible(focused, visible);
+      if (next !== -1) this.focus(next);
+    }
     const selectedBridges = new Set(pathBridges(state.selected).map(([a, b]) => bridgeKey(a, b)));
     for (const [key, line] of this.bridges) {
       line.classList.toggle('is-gone', !state.visibleBridges.has(key));

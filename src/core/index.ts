@@ -2,6 +2,7 @@ export * from './alphabet';
 export * from './plural';
 export * from './i18n';
 export * from './board';
+export * from './focus';
 export * from './puzzle';
 export * from './game';
 export * from './typing';

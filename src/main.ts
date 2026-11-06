@@ -17,6 +17,7 @@ import { BoardView } from './game/board-view';
 import { GameController } from './game/controller';
 import { attachKeyboardInput } from './game/keyboard-input';
 import { attachPointerInput } from './game/pointer-input';
+import { attachTileFocus } from './game/tile-focus';
 import { loadPuzzleFor, puzzleFiles } from './game/puzzle-source';
 import { StatusLine } from './game/status-line';
 import { Timer } from './game/timer';
@@ -178,6 +179,7 @@ function startGame(puzzle: Puzzle, published: readonly string[]): void {
     initial,
   );
   attachPointerInput(board, game);
+  attachTileFocus(board, game);
   // Keys go to the board only while no menu or dialog is open over it.
   attachKeyboardInput(game, { paused: () => document.querySelector('dialog[open]') !== null });
 
