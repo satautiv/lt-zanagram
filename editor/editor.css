@@ -1,0 +1,222 @@
+/* The authoring tool: a plain dev page, dark like the game. */
+:root {
+  --bg: #141414;
+  --panel: #1e1d1b;
+  --tile: #2e2c29;
+  --text: #f2efe9;
+  --muted: #9a958d;
+  --accent: #4169e1;
+  --error: #e5534b;
+  --ok: #3fb950;
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font:
+    15px/1.4 system-ui,
+    sans-serif;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--panel);
+}
+
+.toolbar h1 {
+  margin: 0 8px 0 0;
+  font-size: 1.1rem;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+  background: var(--tile);
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 4px 8px;
+}
+
+button {
+  cursor: pointer;
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+#message {
+  color: var(--muted);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 460px) 1fr;
+  gap: 24px;
+  padding: 16px;
+}
+
+/* The board stays in view while hovering words further down the list. */
+.layout > section:first-child {
+  position: sticky;
+  top: 0;
+  align-self: start;
+}
+
+@media (max-width: 800px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .layout > section:first-child {
+    position: static;
+  }
+}
+
+.editor-board {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+}
+
+.slot {
+  cursor: pointer;
+}
+
+.slot-hit {
+  stroke: transparent;
+  stroke-width: 18;
+}
+
+.slot-line {
+  stroke: #3a3835;
+  stroke-width: 3;
+  stroke-dasharray: 4 6;
+  pointer-events: none;
+}
+
+.slot:hover .slot-line {
+  stroke: var(--muted);
+}
+
+.slot.is-on .slot-line {
+  stroke: #6b665d;
+  stroke-width: 12;
+  stroke-dasharray: none;
+  stroke-linecap: round;
+}
+
+.slot.is-orphan .slot-line {
+  stroke: var(--error);
+}
+
+.slot.is-lit .slot-line {
+  stroke: var(--accent);
+}
+
+.tile {
+  cursor: pointer;
+}
+
+.tile circle {
+  fill: var(--tile);
+  stroke: transparent;
+  stroke-width: 4;
+}
+
+.tile text {
+  fill: var(--text);
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 32px;
+  pointer-events: none;
+}
+
+.tile .tile-index {
+  fill: var(--muted);
+  font:
+    11px system-ui,
+    sans-serif;
+}
+
+.tile.is-selected circle {
+  stroke: var(--text);
+}
+
+.tile.is-orphan circle {
+  stroke: var(--error);
+  stroke-dasharray: 6 4;
+}
+
+.tile.is-lit circle {
+  fill: var(--accent);
+}
+
+.help {
+  color: var(--muted);
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  font-weight: 700;
+}
+
+.warnings ul {
+  padding-left: 20px;
+  color: var(--error);
+}
+
+.warnings .ok {
+  color: var(--ok);
+}
+
+.words {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  columns: 2 260px;
+}
+
+.word {
+  break-inside: avoid;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  align-items: center;
+  padding: 4px 6px;
+  border-radius: 6px;
+}
+
+.word:hover {
+  background: var(--panel);
+}
+
+.word.is-required {
+  font-weight: 700;
+}
+
+.word.is-lost label {
+  color: var(--error);
+  text-decoration: line-through;
+}
+
+.word small {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.word .definition {
+  flex: 1 1 100%;
+}

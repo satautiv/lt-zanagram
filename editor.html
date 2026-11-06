@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="lt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Žodžių tiltai: editor</title>
+  </head>
+  <body>
+    <header class="toolbar">
+      <h1>Editor</h1>
+      <label>Date <input id="date" type="date" /></label>
+      <button id="load-date" type="button">Load date</button>
+      <label class="file">Load file <input id="load-file" type="file" accept=".json" /></label>
+      <button id="new" type="button">New</button>
+      <label>Author <input id="author" type="text" size="12" /></label>
+      <button id="export" type="button" class="primary">Export JSON</button>
+      <span id="message" role="status"></span>
+    </header>
+    <main class="layout">
+      <section>
+        <div id="board"></div>
+        <p class="help">
+          Click a tile and type its letter (arrows move, Backspace clears). Click between two tiles
+          to toggle a bridge.
+        </p>
+        <div id="stats" class="stats"></div>
+        <div id="warnings" class="warnings"></div>
+      </section>
+      <section>
+        <h2>Words <small id="lists">loading word lists…</small></h2>
+        <ul id="words" class="words"></ul>
+      </section>
+    </main>
+    <script type="module" src="/editor/main.ts"></script>
+  </body>
+</html>

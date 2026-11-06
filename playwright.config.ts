@@ -1,5 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
+/** The dev-only editor (/editor.html) is not in the production build, so it runs on `vite dev`. */
+const EDITOR = /editor\.spec\.ts/;
+
 export default defineConfig({
   testDir: 'tests/e2e',
   forbidOnly: !!process.env.CI,
@@ -12,13 +15,26 @@ export default defineConfig({
     serviceWorkers: 'block',
   },
   projects: [
-    { name: 'desktop', use: { ...devices['Desktop Chrome'] } },
-    { name: 'mobile', use: { ...devices['Pixel 7'] } },
+    { name: 'desktop', use: { ...devices['Desktop Chrome'] }, testIgnore: EDITOR },
+    { name: 'mobile', use: { ...devices['Pixel 7'] }, testIgnore: EDITOR },
+    {
+      name: 'editor',
+      testMatch: EDITOR,
+      use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:5174/lt-zanagram/' },
+    },
   ],
-  webServer: {
-    command: 'npm run build && npm run preview -- --port 4173 --strictPort',
-    url: 'http://localhost:4173/lt-zanagram/',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-  },
+  webServer: [
+    {
+      command: 'npm run build && npm run preview -- --port 4173 --strictPort',
+      url: 'http://localhost:4173/lt-zanagram/',
+      reuseExistingServer: !process.env.CI,
+      timeout: 120_000,
+    },
+    {
+      command: 'npm run dev -- --port 5174 --strictPort',
+      url: 'http://localhost:5174/lt-zanagram/editor.html',
+      reuseExistingServer: !process.env.CI,
+      timeout: 120_000,
+    },
+  ],
 });
