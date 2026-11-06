@@ -8,6 +8,14 @@ export interface PuzzleIndexEntry {
 
 const base = () => `${import.meta.env.BASE_URL}puzzles/`;
 
+const indexFile = () => `${base()}index.json`;
+const puzzleFile = (date: string) => `${base()}${date}.json`;
+
+/** The files a day's puzzle is loaded from: the index and the puzzle itself. */
+export function puzzleFiles(date: string): string[] {
+  return [indexFile(), puzzleFile(date)];
+}
+
 async function getJson(url: string): Promise<unknown> {
   const response = await fetch(url);
   if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
@@ -15,14 +23,14 @@ async function getJson(url: string): Promise<unknown> {
 }
 
 export async function fetchIndex(): Promise<PuzzleIndexEntry[]> {
-  const index = await getJson(`${base()}index.json`);
+  const index = await getJson(indexFile());
   if (!Array.isArray(index)) throw new Error('puzzles/index.json is not a list');
   return index as PuzzleIndexEntry[];
 }
 
 /** Fetches, decodes (ADR-0001) and validates one day's puzzle. */
 export async function fetchPuzzle(date: string): Promise<Puzzle> {
-  const puzzle = readPuzzle(await getJson(`${base()}${date}.json`));
+  const puzzle = readPuzzle(await getJson(puzzleFile(date)));
   const { ok, errors } = validatePuzzle(puzzle);
   if (!ok) throw new Error(`Puzzle ${date} is invalid: ${errors[0]?.message}`);
   return puzzle;

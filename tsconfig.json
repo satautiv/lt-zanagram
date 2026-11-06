@@ -15,5 +15,6 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["src", "tests", "tools", "editor", "*.config.ts"]
+  "include": ["src", "tests", "tools", "editor", "*.config.ts"],
+  "exclude": ["src/sw"]
 }

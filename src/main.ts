@@ -17,7 +17,7 @@ import { BoardView } from './game/board-view';
 import { GameController } from './game/controller';
 import { attachKeyboardInput } from './game/keyboard-input';
 import { attachPointerInput } from './game/pointer-input';
-import { loadPuzzleFor } from './game/puzzle-source';
+import { loadPuzzleFor, puzzleFiles } from './game/puzzle-source';
 import { StatusLine } from './game/status-line';
 import { Timer } from './game/timer';
 import { loadProgress, saveProgress } from './storage/progress';
@@ -30,6 +30,7 @@ import { renderResults } from './ui/results';
 import { SettingsPanel } from './ui/settings-panel';
 import { Toolbar } from './ui/toolbar';
 import { t } from './i18n';
+import { registerServiceWorker } from './pwa';
 
 const app = document.querySelector<HTMLElement>('#app')!;
 
@@ -209,9 +210,11 @@ async function boot(): Promise<void> {
       localDate(),
     );
     startGame(puzzle, published);
+    registerServiceWorker(puzzleFiles(puzzle.id));
   } catch (error) {
     console.error(error);
     showLoadError();
+    registerServiceWorker([]);
   }
 }
 

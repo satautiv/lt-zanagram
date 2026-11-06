@@ -22,4 +22,6 @@ Commands: `npm test` (Vitest), `npm run e2e` (Playwright), `npm run lint`, `npm 
 
 `src/core` must stay DOM-free: it is type-checked without the DOM lib (`tsconfig.core.json`) and ESLint blocks browser globals there.
 
+`src/sw` is the service worker, type-checked with the WebWorker lib (`tsconfig.sw.json`); `tools/service-worker-plugin.ts` builds it to `sw.js` with the precache list. E2E tests block service workers unless they opt in (`offline.spec.ts`).
+
 Workflow: one branch + PR per ticket, body says `Closes #N`; merge once CI passes.
