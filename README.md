@@ -1,6 +1,6 @@
 # Žodžių tiltai
 
-A daily Lithuanian word-bridge puzzle (working title). Play: <https://satautiv.github.io/lt-zanagram/>. Spec: [`docs/spec.md`](docs/spec.md) · Vocabulary: [`GLOSSARY.md`](GLOSSARY.md) · Plan: [issue #1](https://github.com/satautiv/lt-zanagram/issues/1).
+A daily Lithuanian word-bridge puzzle. Play: <https://satautiv.github.io/lt-zanagram/>. Spec: [`docs/spec.md`](docs/spec.md) · Vocabulary: [`GLOSSARY.md`](GLOSSARY.md) · Plan: [issue #1](https://github.com/satautiv/lt-zanagram/issues/1).
 
 ## Development
 

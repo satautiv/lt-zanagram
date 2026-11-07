@@ -6,7 +6,7 @@ Source: `Žodžių tiltai — game specification.pdf` (Nov 5, 2026, @Vytautas), 
 
 Build a daily Lithuanian word puzzle: 16 letters on a 4×4 grid, joined by "bridges", hide 10–16 Lithuanian words that the player finds by tracing paths. Found words fall away, the board empties, and the last word usually uses every remaining letter.
 
-The reference is Zanagrams on pzlgames.com (played on 2026-11-05: the Oct 26 and Nov 3 boards). Copy the mechanics and the calm dark look, not the name, logo or puzzles. Working title: Žodžių tiltai ("word bridges"); the final name is an open human decision.
+The reference is Zanagrams on pzlgames.com (played on 2026-11-05: the Oct 26 and Nov 3 boards). Copy the mechanics and the calm dark look, not the name, logo or puzzles. Name: Žodžių tiltai ("word bridges"). _(decided)_ The working title became the final name (D10).
 
 Goals for v1:
 
@@ -300,7 +300,7 @@ Build in five milestones; each ends with passing tests and a playable build, so 
 
 **Open questions for the author** (each becomes a `ready-for-human` ticket):
 
-- Final game name and domain. Decide before launch: the `zt:` storage prefix is permanent once players have saved data.
+- ~~Final game name and domain.~~ Decided 2026-11-07: see D10.
 - Which dictionary sources pass the licence check (an agent researches and recommends first).
 - Ad network and whether "Remove ads" is a paid unlock (affects the Android wrapper): deferred past v1.
 
@@ -319,6 +319,6 @@ Settled in the grilling session on 2026-11-05:
 | D7  | Finished puzzles reopen to their results screen; no replay in v1.                                                                                            |
 | D8  | `valid.txt` is gitignored and rebuilt from a pinned source; the small lists are committed.                                                                   |
 | D9  | The author is the sole reviewer of generated puzzles and definitions; agents research, generate and draft. 60 approved puzzles before launch.                |
-| D10 | "Žodžių tiltai" stays the working title; renaming is one later ticket, decided before launch.                                                                |
+| D10 | Final name (decided 2026-11-07): "Žodžių tiltai", sentence case; the `zt:v1:` storage prefix stays; no custom domain yet (default GitHub Pages address).     |
 | D11 | One branch + PR per ticket; CI must pass; the agent merges.                                                                                                  |
 | D12 | All five milestones are ticketed up front.                                                                                                                   |
