@@ -1,5 +1,5 @@
 /** Colours for feedback messages (spec §4). */
-export type Tone = 'ok' | 'warn' | 'error';
+export type Tone = 'ok' | 'extra' | 'warn' | 'error';
 
 const FLASH_MS = 1200;
 

@@ -81,6 +81,7 @@ test('a found extra word lights up yellow, a required word green', async ({ page
   await typeKeys(page, extra.toLowerCase());
   await page.keyboard.press('Enter');
   await expect(status(page)).toHaveText('Papildomas žodis! −10 s');
+  await expect(status(page)).toHaveCSS('color', 'rgb(229, 192, 59)');
   const lit = page.locator('.tile.is-found');
   await expect(lit).toHaveCount([...extra].length);
   await expect(page.locator('.tile.is-found.is-extra')).toHaveCount([...extra].length);

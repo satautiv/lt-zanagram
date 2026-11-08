@@ -101,7 +101,7 @@ On submit, show one short message in the header for about 1.2 s, then return to 
 | Not in any word list                 | Žodžio nėra sąraše                                                             | red    |
 | Required or extra word already found | Jau rastas                                                                     | orange |
 | Required word found                  | Random praise, e.g. Puiku!, Šaunu!, Gerai! (only if "Feedback messages" is on) | green  |
-| Extra word found                     | Papildomas žodis! −10 s                                                        | green  |
+| Extra word found                     | Papildomas žodis! −10 s                                                        | yellow |
 
 _(decided)_ A found word holds its traced path lit for about 1 s, green for a required word and yellow for an extra word, with a slight pop (scale up about 12% and back); with reduced motion it only holds its colour. Tiles and bridges the word frees fall away after that second, and the results screen of a solved puzzle waits for it. Starting a new path, a hint or giving up ends it at once (#73, #75).
 
@@ -115,7 +115,7 @@ The whole game is one centred column, max width about 380 px, dark by default, w
 
 - Background near-black (`#141414`); tiles are dark grey circles (`#2e2c29`), about 72 px on a 4×4 board with roughly 20 px gaps; letters bold, off-white, rounded sans (e.g. Baloo 2 or Nunito, which include Lithuanian glyphs).
 - Bridges are thick (about 14 px) rounded bars in the tile colour, drawn under the tiles, so the tiles look strung together. Crossing diagonals draw as an X.
-- One accent colour (blue `#4169e1`) for the selected path; green, orange and red for messages.
+- One accent colour (blue `#4169e1`) for the selected path; green, yellow (extra words, _(decided)_ #77), orange and red for messages.
 - Light mode inverts to an off-white background and light-grey tiles.
 - Render the board as one SVG (bridges as lines, tiles as circles + text) so rotation, scaling and animation stay simple.
 
