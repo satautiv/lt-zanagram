@@ -199,7 +199,7 @@ export class GameController {
         say(t('feedback.alreadyFound'), 'warn');
         break;
       case 'extra':
-        say(t('feedback.extraFound'), 'ok');
+        say(t('feedback.extraFound'), 'extra');
         break;
       case 'required':
         if (result.solved) say(t('status.solved'), 'ok');

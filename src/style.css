@@ -11,6 +11,8 @@
   /* A found extra word lights up yellow (dark letters on it in both themes). */
   --extra: #e5c03b;
   --on-extra: #141414;
+  /* Yellow text on the page background, e.g. the extra-word message. */
+  --extra-text: #e5c03b;
   --warn: #e3a03a;
   --error: #e5534b;
   --font: 'Nunito', system-ui, sans-serif;
@@ -27,6 +29,8 @@
   --on-ok: #fff;
   --extra: #d4a900;
   --on-extra: #22201c;
+  /* Darker in light mode so the message keeps 4.5:1 on the off-white background. */
+  --extra-text: #7a6000;
   --warn: #a65d00;
   --error: #c0362f;
   color-scheme: light;
@@ -179,13 +183,17 @@ body {
   }
 }
 
-/* Status line tones (spec §4): accent while building, green/orange/red for feedback. */
+/* Status line tones (spec §4): accent while building, green/yellow/orange/red for feedback. */
 .status[data-tone='building'] {
   color: var(--accent);
 }
 
 .status[data-tone='ok'] {
   color: var(--ok);
+}
+
+.status[data-tone='extra'] {
+  color: var(--extra-text);
 }
 
 .status[data-tone='warn'] {
