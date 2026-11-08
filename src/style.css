@@ -8,6 +8,9 @@
   --ok: #3fb950;
   /* Letters on the green of a found word: dark on the bright dark-mode green, white on the light one. */
   --on-ok: #141414;
+  /* A found extra word lights up yellow (dark letters on it in both themes). */
+  --extra: #e5c03b;
+  --on-extra: #141414;
   --warn: #e3a03a;
   --error: #e5534b;
   --font: 'Nunito', system-ui, sans-serif;
@@ -22,6 +25,8 @@
   --muted: #6b665d;
   --ok: #1f7a35;
   --on-ok: #fff;
+  --extra: #d4a900;
+  --on-extra: #22201c;
   --warn: #a65d00;
   --error: #c0362f;
   color-scheme: light;
@@ -216,7 +221,8 @@ body {
   }
 }
 
-/* A found word holds green and pops for FOUND_MS (1 s, spec §4) before its tiles fall away. */
+/* A found word holds green (an extra word yellow) and pops for FOUND_MS (1 s, spec §4) before its
+   tiles fall away. */
 .tile.is-found .tile-face {
   fill: var(--ok);
 }
@@ -232,6 +238,18 @@ body {
 
 .bridge.is-found {
   stroke: var(--ok);
+}
+
+.tile.is-found.is-extra .tile-face {
+  fill: var(--extra);
+}
+
+.tile.is-found.is-extra .tile-letter {
+  fill: var(--on-extra);
+}
+
+.bridge.is-found.is-extra {
+  stroke: var(--extra);
 }
 
 .tile.is-found {
