@@ -24,6 +24,8 @@ export interface BoardViewState {
   visibleBridges: ReadonlySet<string>;
   /** The path being built, in order. */
   selected: readonly TileIndex[];
+  /** The path of a word just found, shown green for a moment (spec §4). */
+  found: readonly TileIndex[];
   /** Tiles revealed by hints. */
   hinted: readonly TileIndex[];
 }
@@ -214,13 +216,18 @@ export class BoardView {
 
   update(state: BoardViewState): void {
     const selected = new Set(state.selected);
+    const found = new Set(state.found);
     const hinted = new Set(state.hinted);
     const focused = this.tileOf(document.activeElement);
     this.tiles.forEach((tile, index) => {
       const gone = !state.visibleTiles.has(index);
       tile.classList.toggle('is-gone', gone);
       tile.classList.toggle('is-selected', selected.has(index));
-      tile.classList.toggle('is-hinted', hinted.has(index) && !selected.has(index));
+      tile.classList.toggle('is-found', found.has(index));
+      tile.classList.toggle(
+        'is-hinted',
+        hinted.has(index) && !selected.has(index) && !found.has(index),
+      );
       tile.setAttribute('aria-pressed', String(selected.has(index)));
       if (gone) {
         tile.setAttribute('aria-hidden', 'true');
@@ -242,10 +249,14 @@ export class BoardView {
       const next = this.nearestVisible(focused, visible);
       if (next !== -1) this.focus(next);
     }
-    const selectedBridges = new Set(pathBridges(state.selected).map(([a, b]) => bridgeKey(a, b)));
+    const keys = (path: readonly TileIndex[]) =>
+      new Set(pathBridges(path).map(([a, b]) => bridgeKey(a, b)));
+    const selectedBridges = keys(state.selected);
+    const foundBridges = keys(state.found);
     for (const [key, line] of this.bridges) {
       line.classList.toggle('is-gone', !state.visibleBridges.has(key));
       line.classList.toggle('is-selected', selectedBridges.has(key));
+      line.classList.toggle('is-found', foundBridges.has(key));
     }
   }
 }

@@ -20,6 +20,16 @@ import { t } from '../i18n';
 import type { BoardView } from './board-view';
 import type { StatusLine, Tone } from './status-line';
 
+/** How long a found word stays green and popped before the board moves on (spec §4). */
+export const FOUND_MS = 1000;
+
+/** A found word on show: its traced path, and the board as it was before the find. */
+interface Found {
+  path: readonly TileIndex[];
+  shown: Visibility;
+  timer: ReturnType<typeof setTimeout>;
+}
+
 export interface ControllerOptions {
   /** Raw play time so far; the pausing timer lives outside the controller. */
   elapsedMs?: () => number;
@@ -38,6 +48,8 @@ export class GameController {
   /** Quarter turns shown so far; keeps growing so every turn animates clockwise. */
   private turns: number;
   private onBoard: Visibility;
+  /** The word just found, held on the board for `FOUND_MS` before its tiles fall away. */
+  private found: Found | null = null;
 
   constructor(
     readonly puzzle: Puzzle,
@@ -109,6 +121,8 @@ export class GameController {
   }
 
   setPath(path: readonly TileIndex[]): void {
+    // Starting the next word ends the celebration at once; dropped tiles fall away now.
+    this.endFound();
     this.path = [...path];
     if (this.path.length > 0) this.status.building(spell(this.puzzle, this.path));
     else this.status.idle();
@@ -118,6 +132,7 @@ export class GameController {
   /** Ends the puzzle as given up; the results show the remaining words (spec §2 rule 10). */
   giveUp(): void {
     if (!this.playing) return;
+    this.endFound();
     this.path = [];
     this.state = giveUp(this.timed());
     this.onBoard = visibility(this.puzzle, this.state);
@@ -130,6 +145,7 @@ export class GameController {
     if (!this.playing) return;
     const next = useHint(this.puzzle, this.state);
     if (next === this.state) return;
+    this.endFound();
     this.state = next;
     this.render();
     this.options.onChange?.(this.state, null);
@@ -156,8 +172,10 @@ export class GameController {
     }
     const timed = this.timed();
     const { state, result } = submit(this.puzzle, timed, path);
+    const before = this.onBoard;
     this.state = state;
     this.onBoard = visibility(this.puzzle, state);
+    if (result.kind === 'required' || result.kind === 'extra') this.showFound(path, before);
     this.feedback(result, path);
     this.path = [];
     this.render();
@@ -200,6 +218,22 @@ export class GameController {
     }
   }
 
+  /**
+   * Holds a found word's traced path green for `FOUND_MS` (spec §4). The board keeps showing what
+   * was on it before the find, so tiles and bridges the word freed fall away only afterwards.
+   */
+  private showFound(path: readonly TileIndex[], before: Visibility): void {
+    this.endFound();
+    this.found = { path, shown: before, timer: setTimeout(() => this.endFound(), FOUND_MS) };
+  }
+
+  private endFound(): void {
+    if (!this.found) return;
+    clearTimeout(this.found.timer);
+    this.found = null;
+    this.renderBoard();
+  }
+
   /** The current state with the play time brought up to date, for saving. */
   snapshot(): GameState {
     return this.timed();
@@ -220,10 +254,12 @@ export class GameController {
   }
 
   private renderBoard(): void {
+    const shown = this.found?.shown ?? this.onBoard;
     this.board.update({
-      visibleTiles: this.onBoard.tiles,
-      visibleBridges: this.onBoard.bridges,
+      visibleTiles: shown.tiles,
+      visibleBridges: shown.bridges,
       selected: this.path,
+      found: this.found?.path ?? [],
       hinted: revealedTiles(this.puzzle, this.state),
     });
   }

@@ -76,3 +76,57 @@ test('solves a whole puzzle by dragging', async ({ page }) => {
   await expect(status(page)).toHaveText('Išspręsta!');
   await expect(page.locator('.tile:not(.is-gone)')).toHaveCount(0);
 });
+
+/** A required word with tiles no other word uses, so finding it first frees them. */
+const freeing = puzzle.words.find((w) =>
+  w.path.some((tile) => puzzle.words.every((o) => o === w || !o.path.includes(tile))),
+)!;
+const freed = freeing.path.filter((tile) =>
+  puzzle.words.every((o) => o === freeing || !o.path.includes(tile)),
+);
+const found = (page: Page) => page.locator('.tile.is-found');
+const gone = (page: Page) => page.locator('.tile.is-gone');
+
+test('a found word holds green for a second, then the tiles it freed fall away', async ({
+  page,
+}) => {
+  await page.goto('./');
+  await drag(page, freeing.path);
+  await expect(found(page)).toHaveCount(freeing.path.length);
+  await expect(page.locator('.bridge.is-found')).toHaveCount(freeing.path.length - 1);
+  await expect(gone(page)).toHaveCount(0);
+  const pop = await found(page)
+    .first()
+    .evaluate((tile) => getComputedStyle(tile).animationName);
+  expect(pop).toBe('found-pop');
+
+  await expect(found(page)).toHaveCount(0);
+  await expect(gone(page)).toHaveCount(freed.length);
+});
+
+test('starting the next word ends the celebration at once', async ({ page }) => {
+  await page.goto('./');
+  await drag(page, freeing.path);
+  await expect(found(page)).toHaveCount(freeing.path.length);
+  const next = puzzle.words.find((w) => w !== freeing)!;
+  const centers = await tileCenters(page);
+  const first = centers[next.path[0]!]!;
+  await page.mouse.move(first.x, first.y);
+  await page.mouse.down();
+  await expect(found(page)).toHaveCount(0);
+  await expect(gone(page)).toHaveCount(freed.length);
+  await expect(page.locator('.tile.is-selected')).toHaveCount(1);
+  await page.mouse.up();
+});
+
+test('with reduced motion a found word only holds green', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('./');
+  await drag(page, freeing.path);
+  await expect(found(page)).toHaveCount(freeing.path.length);
+  const pop = await found(page)
+    .first()
+    .evaluate((tile) => getComputedStyle(tile).animationName);
+  expect(pop).toBe('none');
+  await expect(found(page)).toHaveCount(0);
+});

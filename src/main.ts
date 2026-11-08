@@ -14,7 +14,7 @@ import {
   type Puzzle,
 } from './core';
 import { BoardView } from './game/board-view';
-import { GameController } from './game/controller';
+import { FOUND_MS, GameController } from './game/controller';
 import { attachKeyboardInput } from './game/keyboard-input';
 import { attachPointerInput } from './game/pointer-input';
 import { attachTileFocus } from './game/tile-focus';
@@ -174,8 +174,8 @@ function startGame(puzzle: Puzzle, published: readonly string[]): void {
           published,
         });
         saveStats(store, stats);
-        // Let the last word fall away before the results replace the board.
-        setTimeout(showResults, 700);
+        // Let the last word celebrate and fall away before the results replace the board.
+        setTimeout(showResults, (result?.kind === 'required' ? FOUND_MS : 0) + 700);
       },
     },
     initial,
