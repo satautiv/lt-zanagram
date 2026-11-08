@@ -103,6 +103,8 @@ On submit, show one short message in the header for about 1.2 s, then return to 
 | Required word found                  | Random praise, e.g. Puiku!, Šaunu!, Gerai! (only if "Feedback messages" is on) | green  |
 | Extra word found                     | Papildomas žodis! −10 s                                                        | green  |
 
+_(decided)_ A found required or extra word holds its traced path green for about 1 s with a slight pop (scale up about 12% and back); with reduced motion it only holds green. Tiles and bridges the word frees fall away after that second, and the results screen of a solved puzzle waits for it. Starting a new path, a hint or giving up ends it at once (#73).
+
 The first extra word ever found also opens a one-time dialog explaining extras: they are less common words, not needed to finish, and each takes 10 seconds off the time. Invalid submissions get a short horizontal shake of the path. Add optional haptics (`navigator.vibrate`) on mobile.
 
 ## 5. Screens and UI
@@ -308,17 +310,18 @@ Build in five milestones; each ends with passing tests and a playable build, so 
 
 Settled in the grilling session on 2026-11-05:
 
-| #   | Decision                                                                                                                                                     |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| D1  | Vocabulary: Puzzle (whole day's content) vs Board (tiles + bridges) vs Submission (a committed path before judgement). See `GLOSSARY.md`.                    |
-| D2  | Puzzle files are committed already obfuscated, because the repo is public ([ADR-0001](adr/0001-puzzles-obfuscated-at-rest.md)).                              |
-| D3  | The streak counts only a puzzle that was the daily puzzle when started; a day with no published puzzle freezes the streak; the fallback puzzle never counts. |
-| D4  | Late-night solves count: started on its day and solved before the next daily puzzle is played.                                                               |
-| D5  | Per-word times on the results screen are adjusted for extra-word bonuses.                                                                                    |
-| D6  | Played and Solves count daily and archive puzzles; the streak is daily-only; giving up an archive puzzle doesn't touch the streak.                           |
-| D7  | Finished puzzles reopen to their results screen; no replay in v1.                                                                                            |
-| D8  | `valid.txt` is gitignored and rebuilt from a pinned source; the small lists are committed.                                                                   |
-| D9  | The author is the sole reviewer of generated puzzles and definitions; agents research, generate and draft. 60 approved puzzles before launch.                |
-| D10 | Final name (decided 2026-11-07): "Žodžių tiltai", sentence case; the `zt:v1:` storage prefix stays; no custom domain yet (default GitHub Pages address).     |
-| D11 | One branch + PR per ticket; CI must pass; the agent merges.                                                                                                  |
-| D12 | All five milestones are ticketed up front.                                                                                                                   |
+| #   | Decision                                                                                                                                                            |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D1  | Vocabulary: Puzzle (whole day's content) vs Board (tiles + bridges) vs Submission (a committed path before judgement). See `GLOSSARY.md`.                           |
+| D2  | Puzzle files are committed already obfuscated, because the repo is public ([ADR-0001](adr/0001-puzzles-obfuscated-at-rest.md)).                                     |
+| D3  | The streak counts only a puzzle that was the daily puzzle when started; a day with no published puzzle freezes the streak; the fallback puzzle never counts.        |
+| D4  | Late-night solves count: started on its day and solved before the next daily puzzle is played.                                                                      |
+| D5  | Per-word times on the results screen are adjusted for extra-word bonuses.                                                                                           |
+| D6  | Played and Solves count daily and archive puzzles; the streak is daily-only; giving up an archive puzzle doesn't touch the streak.                                  |
+| D7  | Finished puzzles reopen to their results screen; no replay in v1.                                                                                                   |
+| D8  | `valid.txt` is gitignored and rebuilt from a pinned source; the small lists are committed.                                                                          |
+| D9  | The author is the sole reviewer of generated puzzles and definitions; agents research, generate and draft. 60 approved puzzles before launch.                       |
+| D10 | Final name (decided 2026-11-07): "Žodžių tiltai", sentence case; the `zt:v1:` storage prefix stays; no custom domain yet (default GitHub Pages address).            |
+| D11 | One branch + PR per ticket; CI must pass; the agent merges.                                                                                                         |
+| D12 | All five milestones are ticketed up front.                                                                                                                          |
+| D13 | Found-word feedback (decided 2026-11-08, #73): the traced path holds green and pops for about 1 s; freed tiles fall away after it; reduced motion only holds green. |

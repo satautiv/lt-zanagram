@@ -6,6 +6,8 @@
   --accent: #4169e1;
   --hint: #c9922e;
   --ok: #3fb950;
+  /* Letters on the green of a found word: dark on the bright dark-mode green, white on the light one. */
+  --on-ok: #141414;
   --warn: #e3a03a;
   --error: #e5534b;
   --font: 'Nunito', system-ui, sans-serif;
@@ -19,6 +21,7 @@
   --text: #22201c;
   --muted: #6b665d;
   --ok: #1f7a35;
+  --on-ok: #fff;
   --warn: #a65d00;
   --error: #c0362f;
   color-scheme: light;
@@ -209,6 +212,46 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .tile.is-shaking {
+    animation: none;
+  }
+}
+
+/* A found word holds green and pops for FOUND_MS (1 s, spec §4) before its tiles fall away. */
+.tile.is-found .tile-face {
+  fill: var(--ok);
+}
+
+.tile.is-found .tile-letter {
+  fill: var(--on-ok);
+}
+
+/* Colour is never the only signal: the found path keeps a ring, like a selected one. */
+.tile.is-found .tile-ring {
+  stroke: var(--text);
+}
+
+.bridge.is-found {
+  stroke: var(--ok);
+}
+
+.tile.is-found {
+  animation: found-pop 1000ms ease-in-out;
+}
+
+@keyframes found-pop {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  25%,
+  70% {
+    transform: scale(1.12);
+  }
+}
+
+/* Reduced motion: the path only holds green, without growing. */
+@media (prefers-reduced-motion: reduce) {
+  .tile.is-found {
     animation: none;
   }
 }
