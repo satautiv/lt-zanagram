@@ -24,8 +24,10 @@ export interface BoardViewState {
   visibleBridges: ReadonlySet<string>;
   /** The path being built, in order. */
   selected: readonly TileIndex[];
-  /** The path of a word just found, shown green for a moment (spec §4). */
+  /** The path of a word just found, lit for a moment (spec §4). */
   found: readonly TileIndex[];
+  /** The found word is an extra word: yellow instead of green. */
+  foundExtra: boolean;
   /** Tiles revealed by hints. */
   hinted: readonly TileIndex[];
 }
@@ -224,6 +226,7 @@ export class BoardView {
       tile.classList.toggle('is-gone', gone);
       tile.classList.toggle('is-selected', selected.has(index));
       tile.classList.toggle('is-found', found.has(index));
+      tile.classList.toggle('is-extra', found.has(index) && state.foundExtra);
       tile.classList.toggle(
         'is-hinted',
         hinted.has(index) && !selected.has(index) && !found.has(index),
@@ -257,6 +260,7 @@ export class BoardView {
       line.classList.toggle('is-gone', !state.visibleBridges.has(key));
       line.classList.toggle('is-selected', selectedBridges.has(key));
       line.classList.toggle('is-found', foundBridges.has(key));
+      line.classList.toggle('is-extra', foundBridges.has(key) && state.foundExtra);
     }
   }
 }

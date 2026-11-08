@@ -74,3 +74,27 @@ test('solves a whole puzzle by typing', async ({ page }) => {
   }
   await expect(status(page)).toHaveText('Išspręsta!');
 });
+
+test('a found extra word lights up yellow, a required word green', async ({ page }) => {
+  await page.goto('./');
+  const extra = puzzle.extras[0]!;
+  await typeKeys(page, extra.toLowerCase());
+  await page.keyboard.press('Enter');
+  await expect(status(page)).toHaveText('Papildomas žodis! −10 s');
+  const lit = page.locator('.tile.is-found');
+  await expect(lit).toHaveCount([...extra].length);
+  await expect(page.locator('.tile.is-found.is-extra')).toHaveCount([...extra].length);
+  const fill = () =>
+    lit
+      .first()
+      .locator('.tile-face')
+      .evaluate((face) => getComputedStyle(face).fill);
+  await expect.poll(fill).toBe('rgb(229, 192, 59)');
+
+  const word = puzzle.words[0]!.word;
+  await typeKeys(page, word.toLowerCase());
+  await page.keyboard.press('Enter');
+  await expect(lit).toHaveCount([...word].length);
+  await expect(page.locator('.tile.is-extra')).toHaveCount(0);
+  await expect.poll(fill).toBe('rgb(63, 185, 80)');
+});

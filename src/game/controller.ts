@@ -20,12 +20,14 @@ import { t } from '../i18n';
 import type { BoardView } from './board-view';
 import type { StatusLine, Tone } from './status-line';
 
-/** How long a found word stays green and popped before the board moves on (spec §4). */
+/** How long a found word stays lit and popped before the board moves on (spec §4). */
 export const FOUND_MS = 1000;
 
 /** A found word on show: its traced path, and the board as it was before the find. */
 interface Found {
   path: readonly TileIndex[];
+  /** An extra word lights up yellow; a required one green. */
+  extra: boolean;
   shown: Visibility;
   timer: ReturnType<typeof setTimeout>;
 }
@@ -175,7 +177,8 @@ export class GameController {
     const before = this.onBoard;
     this.state = state;
     this.onBoard = visibility(this.puzzle, state);
-    if (result.kind === 'required' || result.kind === 'extra') this.showFound(path, before);
+    if (result.kind === 'required' || result.kind === 'extra')
+      this.showFound(path, result.kind === 'extra', before);
     this.feedback(result, path);
     this.path = [];
     this.render();
@@ -219,12 +222,14 @@ export class GameController {
   }
 
   /**
-   * Holds a found word's traced path green for `FOUND_MS` (spec §4). The board keeps showing what
+   * Holds a found word's traced path lit for `FOUND_MS` (spec §4): green for a required word,
+   * yellow for an extra one. The board keeps showing what
    * was on it before the find, so tiles and bridges the word freed fall away only afterwards.
    */
-  private showFound(path: readonly TileIndex[], before: Visibility): void {
+  private showFound(path: readonly TileIndex[], extra: boolean, before: Visibility): void {
     this.endFound();
-    this.found = { path, shown: before, timer: setTimeout(() => this.endFound(), FOUND_MS) };
+    const timer = setTimeout(() => this.endFound(), FOUND_MS);
+    this.found = { path, extra, shown: before, timer };
   }
 
   private endFound(): void {
@@ -260,6 +265,7 @@ export class GameController {
       visibleBridges: shown.bridges,
       selected: this.path,
       found: this.found?.path ?? [],
+      foundExtra: this.found?.extra ?? false,
       hinted: revealedTiles(this.puzzle, this.state),
     });
   }
