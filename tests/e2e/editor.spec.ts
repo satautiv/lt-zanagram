@@ -106,11 +106,12 @@ test('the calendar marks published days; picking one loads it, others start a bo
   await loadFixture(page);
   await expect(day(page, '2026-11-06')).toHaveClass(/has-puzzle/);
   await expect(day(page, '2026-11-06')).toHaveClass(/is-current/);
-  await expect(day(page, '2026-11-20')).not.toHaveClass(/has-puzzle/);
+  // 2026-11-10 is in the gap after the hand-made test days, so it has no puzzle.
+  await expect(day(page, '2026-11-10')).not.toHaveClass(/has-puzzle/);
 
-  await day(page, '2026-11-20').click();
-  await expect(page.getByRole('status')).toHaveText('New board for 2026-11-20');
-  await expect(page.locator('#date')).toHaveValue('2026-11-20');
+  await day(page, '2026-11-10').click();
+  await expect(page.getByRole('status')).toHaveText('New board for 2026-11-10');
+  await expect(page.locator('#date')).toHaveValue('2026-11-10');
   expect((await lettersOnBoard(page)).join('')).toBe('');
 
   await day(page, '2026-11-07').click();

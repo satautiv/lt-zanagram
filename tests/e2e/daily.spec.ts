@@ -18,10 +18,11 @@ test.describe('on a day with a puzzle', () => {
   });
 });
 
-test.describe('after the last published day', () => {
-  test.use({ today: '2026-11-20' });
+// 2026-11-09 and 2026-11-10 have no puzzle: the gap after the hand-made test days.
+test.describe('on a day without a puzzle', () => {
+  test.use({ today: '2026-11-10' });
 
-  test('falls back to the latest available puzzle', async ({ page }) => {
+  test('falls back to the latest earlier puzzle', async ({ page }) => {
     await page.goto('./');
     await expect(page.locator('.tile-letter')).toHaveText(letters('2026-11-08'));
   });
