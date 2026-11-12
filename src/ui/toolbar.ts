@@ -110,7 +110,7 @@ export class Toolbar {
   }
 
   update(puzzle: Puzzle, state: GameState): void {
-    const left = hintsLeft(state);
+    const left = hintsLeft(puzzle, state);
     this.badge.textContent = String(left);
     this.hintButton.disabled = !canUseHint(puzzle, state);
     // A fully revealed target waits to be found; say so instead of looking broken.
@@ -120,7 +120,7 @@ export class Toolbar {
     this.hintButton.title = note;
     this.hintButton.setAttribute('aria-label', `${t('toolbar.hint')}. ${note}`);
 
-    const definitions = definitionHintsLeft(state);
+    const definitions = definitionHintsLeft(puzzle, state);
     const definitionNote = t('toolbar.definitionsLeft', { n: definitions });
     this.definitionBadge.textContent = String(definitions);
     this.definitionButton.disabled = !canUseDefinitionHint(puzzle, state);
