@@ -34,7 +34,7 @@ test('reloading mid-puzzle restores found words, hints, rotation and time', asyn
   await page.reload();
   await expect(page.getByRole('status')).toHaveText('Liko 7 žodžiai');
   await expect(page.locator('.tile.is-hinted')).toHaveCount(1);
-  await expect(page.getByRole('button', { name: /^Patarimas/ }).locator('.badge')).toHaveText('2');
+  await expect(page.getByRole('button', { name: /^Patarimas/ }).locator('.badge')).toHaveText('4');
   await expect(page.locator('.rotor')).toHaveAttribute('style', /rotate\(90deg\)/);
   // Words found before the reload are gone from the board for good.
   await typeWord(page, puzzle.words[0]!.word);

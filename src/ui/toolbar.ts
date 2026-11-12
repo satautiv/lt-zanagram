@@ -1,4 +1,4 @@
-import { hintsLeft, type GameState } from '../core';
+import { canUseHint, hintTargetRevealed, hintsLeft, type GameState, type Puzzle } from '../core';
 import { t } from '../i18n';
 
 const ICONS = {
@@ -87,14 +87,15 @@ export class Toolbar {
     this.timer.hidden = !visible;
   }
 
-  update(state: GameState): void {
+  update(puzzle: Puzzle, state: GameState): void {
     const left = hintsLeft(state);
     this.badge.textContent = String(left);
-    this.hintButton.disabled = left === 0 || state.status !== 'playing';
-    this.hintButton.title = t('toolbar.hintsLeft', { n: left });
-    this.hintButton.setAttribute(
-      'aria-label',
-      `${t('toolbar.hint')}. ${t('toolbar.hintsLeft', { n: left })}`,
-    );
+    this.hintButton.disabled = !canUseHint(puzzle, state);
+    // A fully revealed target waits to be found; say so instead of looking broken.
+    const note = hintTargetRevealed(puzzle, state)
+      ? t('toolbar.hintFindFirst')
+      : t('toolbar.hintsLeft', { n: left });
+    this.hintButton.title = note;
+    this.hintButton.setAttribute('aria-label', `${t('toolbar.hint')}. ${note}`);
   }
 }

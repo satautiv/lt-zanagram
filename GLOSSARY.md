@@ -53,7 +53,7 @@ _Avoid_: Clue, meaning, description
 ## Play
 
 **Hint**:
-One reveal of the next tile of the hint target; a player gets three per puzzle.
+One reveal of the next tile of the hint target; a player gets five per puzzle.
 _Avoid_: Clue, tip
 
 **Hint target**:

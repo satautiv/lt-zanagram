@@ -9,17 +9,18 @@ const puzzle = JSON.parse(
 const hintButton = (page: Page) => page.getByRole('button', { name: /^Patarimas/ });
 const hinted = (page: Page) => page.locator('.tile.is-hinted');
 
-test('hints reveal the tiles of one word in order, at most three', async ({ page }) => {
+test('hints reveal the tiles of one word in order, five per puzzle', async ({ page }) => {
   await page.goto('./');
-  await expect(hintButton(page).locator('.badge')).toHaveText('3');
+  await expect(hintButton(page).locator('.badge')).toHaveText('5');
   await hintButton(page).click();
   await expect(hinted(page)).toHaveCount(1);
-  await expect(hintButton(page).locator('.badge')).toHaveText('2');
+  await expect(hintButton(page).locator('.badge')).toHaveText('4');
   await hintButton(page).click();
   await expect(hinted(page)).toHaveCount(2);
   await hintButton(page).click();
   await expect(hinted(page)).toHaveCount(3);
-  await expect(hintButton(page)).toBeDisabled();
+  await expect(hintButton(page).locator('.badge')).toHaveText('2');
+  await expect(hintButton(page)).toBeEnabled();
 
   // The revealed tiles are the start of a required word's canonical path.
   const tiles = await hinted(page).evaluateAll((nodes) =>
@@ -27,6 +28,12 @@ test('hints reveal the tiles of one word in order, at most three', async ({ page
   );
   const target = puzzle.words.find((w) => w.path.slice(0, 3).every((t) => tiles.includes(t)));
   expect(target).toBeDefined();
+
+  // Two more, then none left.
+  await hintButton(page).click();
+  await hintButton(page).click();
+  await expect(hintButton(page).locator('.badge')).toHaveText('0');
+  await expect(hintButton(page)).toBeDisabled();
 });
 
 test('rotating turns the board but keeps letters upright and input working', async ({ page }) => {

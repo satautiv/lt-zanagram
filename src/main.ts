@@ -159,7 +159,7 @@ function startGame(puzzle: Puzzle, published: readonly string[]): void {
       praise: () => settings.feedback,
       onChange: (state, result) => {
         save();
-        toolbar.update(state);
+        toolbar.update(puzzle, state);
         if (result?.kind === 'extra' && !settings.extraDialogSeen) {
           changeSettings({ extraDialogSeen: true });
           timer.pause('help');
@@ -202,7 +202,7 @@ function startGame(puzzle: Puzzle, published: readonly string[]): void {
   setInterval(showTime, 250);
   showTime();
 
-  toolbar.update(game.state);
+  toolbar.update(puzzle, game.state);
   toolbar.setTimerVisible(settings.showTimer);
   play.append(status.element, board.svg);
   // Banner slot below the board, never over it (spec §10); null while ads are off.

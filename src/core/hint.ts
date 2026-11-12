@@ -2,7 +2,8 @@ import type { TileIndex } from './board';
 import { unfoundWords, type GameState } from './game';
 import type { Puzzle } from './puzzle';
 
-export const MAX_HINTS = 3;
+/** Hints per puzzle (spec §5 Hint; raised from 3 in #82). */
+export const MAX_HINTS = 5;
 
 /** FNV-1a: a small, stable string hash for seeding. */
 function hash(text: string): number {
@@ -24,6 +25,23 @@ function seededRandom(seed: number): number {
 
 export function hintsLeft(state: GameState): number {
   return Math.max(0, MAX_HINTS - state.hintsUsed);
+}
+
+/**
+ * True while a hint would reveal something: hints are left, the puzzle is still being played, and
+ * the hint target (if any) still has hidden tiles. With 5 hints a 4-letter target can be fully
+ * revealed; the next hint waits until that word is found.
+ */
+export function canUseHint(puzzle: Puzzle, state: GameState): boolean {
+  if (state.status !== 'playing' || hintsLeft(state) === 0) return false;
+  if (state.hintTarget === null) return pickHintTarget(puzzle, state) !== null;
+  const word = puzzle.words.find((w) => w.word === state.hintTarget);
+  return word !== undefined && state.hintRevealed < word.path.length;
+}
+
+/** The hint target is fully revealed and hints are left: the player has to find it first. */
+export function hintTargetRevealed(puzzle: Puzzle, state: GameState): boolean {
+  return state.status === 'playing' && hintsLeft(state) > 0 && !canUseHint(puzzle, state);
 }
 
 /**
