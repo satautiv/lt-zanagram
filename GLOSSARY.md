@@ -53,15 +53,15 @@ _Avoid_: Clue, meaning, description
 ## Play
 
 **Hint**:
-One reveal of the next tile of the hint target; a player gets five per puzzle.
+One reveal of the next tile of the hint target; a player gets half as many per puzzle as there are required words, rounded up.
 _Avoid_: Clue, tip
 
 **Hint target**:
-The unfound required word that hints are currently revealing, kept until it is found.
+The unfound required word that hints are currently revealing, kept until it is found; a word whose definition hint is on show is picked first.
 _Avoid_: Hint word
 
 **Definition hint**:
-One look at the definition (and letter count) of an unfound required word, without the word; a player gets two per puzzle.
+One look at the definition (and letter count) of an unfound required word, without the word; a player gets as many per puzzle as hints.
 _Avoid_: Clue, definition help
 
 **Solved**:

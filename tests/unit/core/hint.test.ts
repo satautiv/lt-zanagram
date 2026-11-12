@@ -3,8 +3,8 @@ import {
   canUseHint,
   giveUp,
   hintTargetRevealed,
+  helpsFor,
   hintsLeft,
-  MAX_HINTS,
   newGame,
   pickHintTarget,
   revealedTiles,
@@ -29,6 +29,17 @@ const board = (id = '2026-11-05'): Puzzle =>
     ],
     { id },
   );
+
+/** The same board plus long filler words, so the puzzle allows `helps` of each help (#86). */
+const roomy = (helps: number): Puzzle => {
+  const p = board();
+  const filler = Array.from({ length: helps * 2 - p.words.length }, (_, i) => ({
+    word: `PILDAS${i}`,
+    path: [0, 1, 2, 5, 8, 7, 6, 3, 4],
+    definition: '',
+  }));
+  return { ...p, words: [...p.words, ...filler] };
+};
 
 function hints(puzzle: Puzzle, count: number, state: GameState = newGame(puzzle)): GameState {
   for (let i = 0; i < count; i++) state = useHint(puzzle, state);
@@ -63,27 +74,43 @@ describe('hint picker', () => {
     expect(revealedTiles(p, two)).toEqual(target.path.slice(0, 2));
   });
 
-  it('allows at most 5 hints per puzzle (#82)', () => {
-    expect(MAX_HINTS).toBe(5);
+  it('gives half the required words, rounded up (#86)', () => {
+    expect(helpsFor(board())).toBe(2);
+    expect(helpsFor(roomy(5))).toBe(5);
+    const nine = roomy(5);
+    expect(helpsFor({ ...nine, words: nine.words.slice(0, 9) })).toBe(5);
+    expect(helpsFor(roomy(8))).toBe(8);
+  });
+
+  it('allows only that many hints', () => {
     const p = board();
-    // Four hints reveal the whole 4-letter target; finding it frees the fifth for a new target.
-    let state = hints(p, 4);
-    const first = p.words.find((w) => w.word === state.hintTarget)!;
-    state = useHint(p, submit(p, state, first.path).state);
-    expect(state.hintsUsed).toBe(MAX_HINTS);
-    expect(hintsLeft(state)).toBe(0);
+    const state = hints(p, 2);
+    expect(state.hintsUsed).toBe(2);
+    expect(hintsLeft(p, state)).toBe(0);
     expect(canUseHint(p, state)).toBe(false);
     expect(hintTargetRevealed(p, state)).toBe(false);
     expect(useHint(p, state)).toBe(state);
   });
 
+  it('frees the next hint for a new target once a revealed word is found (#82)', () => {
+    const p = roomy(5);
+    // Four hints reveal the whole 4-letter target; finding it frees the fifth for a new target.
+    let state = hints(p, 4);
+    const first = p.words.find((w) => w.word === state.hintTarget)!;
+    state = useHint(p, submit(p, state, first.path).state);
+    expect(state.hintsUsed).toBe(5);
+    expect(state.hintTarget).not.toBe(first.word);
+    expect(hintsLeft(p, state)).toBe(0);
+    expect(canUseHint(p, state)).toBe(false);
+  });
+
   it('waits once a short target is fully revealed, until it is found (#82)', () => {
-    const p = board();
+    const p = roomy(5);
     const four = hints(p, 4);
     const target = p.words.find((w) => w.word === four.hintTarget)!;
     expect(target.path).toHaveLength(4);
     expect(revealedTiles(p, four)).toEqual(target.path);
-    expect(hintsLeft(four)).toBe(1);
+    expect(hintsLeft(p, four)).toBe(1);
     expect(canUseHint(p, four)).toBe(false);
     expect(hintTargetRevealed(p, four)).toBe(true);
     expect(useHint(p, four)).toBe(four);

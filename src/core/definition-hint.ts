@@ -1,9 +1,6 @@
 import { unfoundWords, type GameState } from './game';
-import { seededChoice } from './hint';
+import { helpsFor, seededChoice } from './hint';
 import type { Puzzle } from './puzzle';
-
-/** Definition hints per puzzle (spec §5 Definition hint, #83). */
-export const MAX_DEFINITION_HINTS = 2;
 
 /** A definition on show while its word is unfound: the text and the word's length, never the word. */
 export interface ShownDefinition {
@@ -11,26 +8,30 @@ export interface ShownDefinition {
   letters: number;
 }
 
-export function definitionHintsLeft(state: GameState): number {
-  return Math.max(0, MAX_DEFINITION_HINTS - state.definitionsShown.length);
+/** Definition hints left: as many per puzzle as hints, half the required words (#86). */
+export function definitionHintsLeft(puzzle: Puzzle, state: GameState): number {
+  return Math.max(0, helpsFor(puzzle) - state.definitionsShown.length);
 }
 
 /**
  * The word whose definition the next definition hint shows: an unfound required word not shown
- * yet, chosen by a seed of the puzzle id and the uses so far, so every player sees the same one.
+ * yet. The hint target comes first, so a definition never pulls hints away from a half-revealed
+ * word (#86); otherwise the word is chosen by a seed of the puzzle id and the uses so far, so
+ * every player sees the same one.
  */
 export function pickDefinitionWord(puzzle: Puzzle, state: GameState): string | null {
   const candidates = unfoundWords(puzzle, state).filter(
     (w) => !state.definitionsShown.includes(w.word),
   );
   if (candidates.length === 0) return null;
+  if (candidates.some((w) => w.word === state.hintTarget)) return state.hintTarget;
   return seededChoice(candidates, `${puzzle.id}:definition:${state.definitionsShown.length}`).word;
 }
 
 export function canUseDefinitionHint(puzzle: Puzzle, state: GameState): boolean {
   return (
     state.status === 'playing' &&
-    definitionHintsLeft(state) > 0 &&
+    definitionHintsLeft(puzzle, state) > 0 &&
     pickDefinitionWord(puzzle, state) !== null
   );
 }

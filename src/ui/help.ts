@@ -1,7 +1,4 @@
-import { MAX_DEFINITION_HINTS, MAX_HINTS } from '../core';
 import { t, type StringKey } from '../i18n';
-
-type Params = Parameters<typeof t>[1];
 
 /** Where the word-list credits live in full (CC BY attribution, ticket #26). */
 export const LICENSES_URL = 'https://github.com/satautiv/lt-zanagram/blob/main/data/LICENSES.md';
@@ -18,7 +15,7 @@ function el<K extends keyof HTMLElementTagNameMap>(
 }
 
 /** Splits a `a|b|c` string into its parts, as `feedback.praise` does. */
-const parts = (key: StringKey, params?: Params) => t(key, params).split('|');
+const parts = (key: StringKey) => t(key).split('|');
 
 /** A modal with a title, some content and one "Supratau" button. */
 export class InfoDialog {
@@ -50,11 +47,7 @@ export class InfoDialog {
  */
 export function howToPlay(onClose: () => void): InfoDialog {
   const rules = el('ul', 'how-to-rules');
-  for (const rule of parts('howTo.rules', {
-    hints: t('howTo.hints', { n: MAX_HINTS }),
-    definitions: t('howTo.definitions', { n: MAX_DEFINITION_HINTS }),
-  }))
-    rules.append(el('li', '', rule));
+  for (const rule of parts('howTo.rules')) rules.append(el('li', '', rule));
 
   const sources = el('section', 'how-to-sources');
   const link = el('a', '', t('howTo.licences'));

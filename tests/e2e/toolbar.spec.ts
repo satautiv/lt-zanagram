@@ -9,8 +9,10 @@ const puzzle = JSON.parse(
 const hintButton = (page: Page) => page.getByRole('button', { name: /^Patarimas/ });
 const hinted = (page: Page) => page.locator('.tile.is-hinted');
 
-test('hints reveal the tiles of one word in order, five per puzzle', async ({ page }) => {
+test('hints reveal the tiles of one word in order, half as many as words', async ({ page }) => {
   await page.goto('./');
+  // The fixture has 9 required words: half, rounded up, is 5 (#86).
+  expect(puzzle.words).toHaveLength(9);
   await expect(hintButton(page).locator('.badge')).toHaveText('5');
   await hintButton(page).click();
   await expect(hinted(page)).toHaveCount(1);
