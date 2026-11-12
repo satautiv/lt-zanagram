@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
+  canUseHint,
   giveUp,
+  hintTargetRevealed,
   hintsLeft,
   MAX_HINTS,
   newGame,
@@ -61,12 +63,41 @@ describe('hint picker', () => {
     expect(revealedTiles(p, two)).toEqual(target.path.slice(0, 2));
   });
 
-  it('allows at most 3 hints per puzzle (milestone 1)', () => {
+  it('allows at most 5 hints per puzzle (#82)', () => {
+    expect(MAX_HINTS).toBe(5);
     const p = board();
-    const three = hints(p, 3);
-    expect(three.hintsUsed).toBe(MAX_HINTS);
-    expect(hintsLeft(three)).toBe(0);
-    expect(useHint(p, three)).toBe(three);
+    // Four hints reveal the whole 4-letter target; finding it frees the fifth for a new target.
+    let state = hints(p, 4);
+    const first = p.words.find((w) => w.word === state.hintTarget)!;
+    state = useHint(p, submit(p, state, first.path).state);
+    expect(state.hintsUsed).toBe(MAX_HINTS);
+    expect(hintsLeft(state)).toBe(0);
+    expect(canUseHint(p, state)).toBe(false);
+    expect(hintTargetRevealed(p, state)).toBe(false);
+    expect(useHint(p, state)).toBe(state);
+  });
+
+  it('waits once a short target is fully revealed, until it is found (#82)', () => {
+    const p = board();
+    const four = hints(p, 4);
+    const target = p.words.find((w) => w.word === four.hintTarget)!;
+    expect(target.path).toHaveLength(4);
+    expect(revealedTiles(p, four)).toEqual(target.path);
+    expect(hintsLeft(four)).toBe(1);
+    expect(canUseHint(p, four)).toBe(false);
+    expect(hintTargetRevealed(p, four)).toBe(true);
+    expect(useHint(p, four)).toBe(four);
+
+    const found = submit(p, four, target.path).state;
+    expect(canUseHint(p, found)).toBe(true);
+    expect(hintTargetRevealed(p, found)).toBe(false);
+  });
+
+  it('can be used on a fresh puzzle, not on a finished one', () => {
+    const p = board();
+    expect(canUseHint(p, newGame(p))).toBe(true);
+    expect(canUseHint(p, giveUp(newGame(p)))).toBe(false);
+    expect(hintTargetRevealed(p, giveUp(newGame(p)))).toBe(false);
   });
 
   it('keeps the target until found, then picks a new one', () => {

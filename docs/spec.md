@@ -30,7 +30,7 @@ The player wins by finding every required word; everything else is optional. The
 7. Valid dictionary words that are not required are extra words. They are optional, are listed separately on the results screen, and each one takes 10 seconds off the final time.
 8. Required words can be found in any order. The final word is often long and covers all remaining tiles (Oct 26 ended with MILITANT, 8 letters; NOMINATION, 10 letters, was required too).
 9. There is no time limit. A timer counts up (hidden by default), pauses when the game is not visible, and the final time is shown on completion.
-10. The player gets 3 hints per puzzle. "Give up" reveals the remaining words and ends the puzzle as given up.
+10. _(decided)_ The player gets 5 hints per puzzle (#82; the reference game has 3). "Give up" reveals the remaining words and ends the puzzle as given up.
 11. _(decided)_ A solved or given-up puzzle is finished: reopening it (from the archive or on reload) goes straight to its results screen. No replay in v1.
 
 ## 3. Board and data model
@@ -125,7 +125,7 @@ The whole game is one centred column, max width about 380 px, dark by default, w
 - Status line: "Liko 14 žodžių", the current word while building, or a feedback message.
 - The board.
 
-**Hint** — 3 per puzzle. The first hint picks a target: the unfound required word with the shortest path whose tiles are all still visible (ties: random, seeded by puzzle id). Each hint reveals one more tile of that word, in order, with a soft amber fill (hint 1 shows the first letter, hint 2 the first two). The target stays until it is found; then the next hint picks a new target. Count hints used for the results screen.
+**Hint** — _(decided)_ 5 per puzzle (#82). The first hint picks a target: the unfound required word with the shortest path whose tiles are all still visible (ties: random, seeded by puzzle id). Each hint reveals one more tile of that word, in order, with a soft amber fill (hint 1 shows the first letter, hint 2 the first two). The target stays until it is found; then the next hint picks a new target. A 4-letter target can be fully revealed by four hints; the hint button then stays disabled ("Pirmiausia raskite atskleistą žodį") until that word is found. Count hints used for the results screen.
 
 **Rotate** — rotates the board 90° clockwise with a short animation. It is purely visual: logic indices stay the same, letters stay upright. Remember the rotation per puzzle.
 
@@ -294,7 +294,7 @@ Build in five milestones; each ends with passing tests and a playable build, so 
    - Visibility: after finding a word, a shared tile stays while any unfound word uses it; it disappears with the last one.
    - Typing search: on a board where V is not bridged after D, typing R-O-D-V leaves "ROD" selected; diacritic fallback picks Š for typed S only when no plain S continues the path.
    - Plural helper returns žodis for 1 and 21, žodžiai for 2 and 22, žodžių for 10, 11 and 15.
-   - Hint picker: hint 1 reveals one tile, hint 2 two tiles of the same word, max 3 per puzzle.
+   - Hint picker: hint 1 reveals one tile, hint 2 two tiles of the same word, max 5 per puzzle (#82).
 2. **Playable board** with 3 hand-made test puzzles: drag, tap and typing all work on a phone and on desktop; messages from section 4; solve leads to the results screen.
 3. **Word lists + generator + editor**: `build-wordlists` produces the lists; `generate` produces 30 valid boards for a seed in under 2 minutes; every generated board passes `validatePuzzle` and the post-checks; the editor can load, edit, playtest and export a board.
 4. **Full game loop**: daily selection, archive calendar, saving and restoring mid-puzzle, stats and streak, settings, tutorial, share, timer with pause and the −10 s extra-word bonus.
@@ -325,3 +325,4 @@ Settled in the grilling session on 2026-11-05:
 | D11 | One branch + PR per ticket; CI must pass; the agent merges.                                                                                                                                              |
 | D12 | All five milestones are ticketed up front.                                                                                                                                                               |
 | D13 | Found-word feedback (decided 2026-11-08, #73): the traced path holds green (yellow for an extra word, #75) and pops for about 1 s; freed tiles fall away after it; reduced motion only holds the colour. |
+| D14 | Hints per puzzle raised from 3 to 5 (decided 2026-11-12, #82); a fully revealed target disables the hint button until it is found.                                                                       |
