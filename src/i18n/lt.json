@@ -18,6 +18,16 @@
     "few": "{n} patarimai",
     "many": "{n} patarimų"
   },
+  "count.definitions": {
+    "one": "{n} apibrėžimas",
+    "few": "{n} apibrėžimai",
+    "many": "{n} apibrėžimų"
+  },
+  "count.letters": {
+    "one": "{n} raidė",
+    "few": "{n} raidės",
+    "many": "{n} raidžių"
+  },
   "count.seconds": {
     "one": "{n} sekundė",
     "few": "{n} sekundės",
@@ -55,6 +65,14 @@
     "many": "Liko {n} patarimų"
   },
   "toolbar.hintFindFirst": "Pirmiausia raskite atskleistą žodį",
+  "toolbar.definitionHint": "Apibrėžimo patarimas",
+  "toolbar.definitionsLeft": {
+    "one": "Liko {n} apibrėžimas",
+    "few": "Liko {n} apibrėžimai",
+    "many": "Liko {n} apibrėžimų"
+  },
+  "definitionHint.title": "Nerastų žodžių apibrėžimai",
+  "definitionHint.label": "Apibrėžimas ({letters}):",
   "toolbar.rotate": "Pasukti lentą",
   "toolbar.removeAds": "Pašalinti reklamas",
   "menu.open": "Meniu",
@@ -94,13 +112,18 @@
   "tutorial.skip": "Praleisti",
   "tutorial.start": "Pradėti žaidimą",
   "howTo.title": "Kaip žaisti",
-  "howTo.rules": "Raskite visus lentoje paslėptus žodžius.|Žodis – tai raidžių kelias tilteliais: perbraukite raides, bakstelėkite jas po vieną arba įveskite žodį klaviatūra.|Žodį sudaro bent 4 raidės, o ta pati raidė jame naudojama tik kartą.|Viena raidė gali priklausyti keliems žodžiams. Raidė ar tiltelis dingsta, kai jų nebereikia jokiam nerastam žodžiui.|Žodžius galite rasti bet kokia tvarka. Paskutinis žodis dažnai panaudoja visas likusias raides.|Papildomi žodžiai nebūtini, bet kiekvienas atima 10 sekundžių iš jūsų laiko.|Laiko limito nėra. Turite {hints}, o pasidavus parodomi visi likę žodžiai.",
+  "howTo.rules": "Raskite visus lentoje paslėptus žodžius.|Žodis – tai raidžių kelias tilteliais: perbraukite raides, bakstelėkite jas po vieną arba įveskite žodį klaviatūra.|Žodį sudaro bent 4 raidės, o ta pati raidė jame naudojama tik kartą.|Viena raidė gali priklausyti keliems žodžiams. Raidė ar tiltelis dingsta, kai jų nebereikia jokiam nerastam žodžiui.|Žodžius galite rasti bet kokia tvarka. Paskutinis žodis dažnai panaudoja visas likusias raides.|Papildomi žodžiai nebūtini, bet kiekvienas atima 10 sekundžių iš jūsų laiko.|Laiko limito nėra. Turite {hints}, o pasidavus parodomi visi likę žodžiai.|Apibrėžimo patarimą galite naudoti {definitions} per galvosūkį: jis parodo dar nerasto žodžio apibrėžimą ir raidžių skaičių, bet ne patį žodį.",
   "howTo.tip": "Gudrybė: pradėkite nuo retų raidžių – Č, Š, Ž, F, H, Ą, Ę, Ų.",
   "howTo.sources": "Šaltiniai",
   "howTo.hints": {
     "one": "{n} patarimą",
     "few": "{n} patarimus",
     "many": "{n} patarimų"
+  },
+  "howTo.definitions": {
+    "one": "{n} kartą",
+    "few": "{n} kartus",
+    "many": "{n} kartų"
   },
   "howTo.sourcesText": "Žodžių sąrašai sudaryti naudojant ispell-lt (BSD-3-Clause) ir VDU Dabartinės lietuvių kalbos tekstyno sąrašus (CC BY 4.0).",
   "howTo.licences": "Licencijos ir autorystė",

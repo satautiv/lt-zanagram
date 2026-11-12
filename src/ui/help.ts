@@ -1,4 +1,4 @@
-import { MAX_HINTS } from '../core';
+import { MAX_DEFINITION_HINTS, MAX_HINTS } from '../core';
 import { t, type StringKey } from '../i18n';
 
 type Params = Parameters<typeof t>[1];
@@ -50,7 +50,10 @@ export class InfoDialog {
  */
 export function howToPlay(onClose: () => void): InfoDialog {
   const rules = el('ul', 'how-to-rules');
-  for (const rule of parts('howTo.rules', { hints: t('howTo.hints', { n: MAX_HINTS }) }))
+  for (const rule of parts('howTo.rules', {
+    hints: t('howTo.hints', { n: MAX_HINTS }),
+    definitions: t('howTo.definitions', { n: MAX_DEFINITION_HINTS }),
+  }))
     rules.append(el('li', '', rule));
 
   const sources = el('section', 'how-to-sources');

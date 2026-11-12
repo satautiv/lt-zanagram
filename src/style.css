@@ -479,6 +479,37 @@ body {
   line-height: 18px;
 }
 
+/* Definition hints (spec §5, #83): the definitions shown, under the board. */
+.definition-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.definition-cards[hidden] {
+  display: none;
+}
+
+.definition-card {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--tile);
+  color: var(--text);
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+/* Only the 800 weight of Nunito is loaded, so the label stands apart by size and its own line. */
+.definition-card-label {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+}
+
 /* Rotation (spec §5 Rotate): the board turns, the letters stay upright. */
 .rotor {
   transform-box: view-box;

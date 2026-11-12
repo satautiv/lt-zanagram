@@ -51,11 +51,13 @@ describe('progress', () => {
     const store = new Store(backend);
     const old: Partial<GameState> = newGame(puzzle);
     delete old.rotation;
+    delete old.definitionsShown;
     backend.data.set(
       'zt:v1:progress:2026-11-05',
       JSON.stringify({ state: old, startedOn: '2026-11-05' }),
     );
     expect(loadProgress(store, '2026-11-05')?.state.rotation).toBe(0);
+    expect(loadProgress(store, '2026-11-05')?.state.definitionsShown).toEqual([]);
   });
 });
 

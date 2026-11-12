@@ -30,7 +30,7 @@ The player wins by finding every required word; everything else is optional. The
 7. Valid dictionary words that are not required are extra words. They are optional, are listed separately on the results screen, and each one takes 10 seconds off the final time.
 8. Required words can be found in any order. The final word is often long and covers all remaining tiles (Oct 26 ended with MILITANT, 8 letters; NOMINATION, 10 letters, was required too).
 9. There is no time limit. A timer counts up (hidden by default), pauses when the game is not visible, and the final time is shown on completion.
-10. _(decided)_ The player gets 5 hints per puzzle (#82; the reference game has 3). "Give up" reveals the remaining words and ends the puzzle as given up.
+10. _(decided)_ The player gets 5 hints per puzzle (#82; the reference game has 3), _(decided)_ plus 2 definition hints (#83). "Give up" reveals the remaining words and ends the puzzle as given up.
 11. _(decided)_ A solved or given-up puzzle is finished: reopening it (from the archive or on reload) goes straight to its results screen. No replay in v1.
 
 ## 3. Board and data model
@@ -126,6 +126,8 @@ The whole game is one centred column, max width about 380 px, dark by default, w
 - The board.
 
 **Hint** — _(decided)_ 5 per puzzle (#82). The first hint picks a target: the unfound required word with the shortest path whose tiles are all still visible (ties: random, seeded by puzzle id). Each hint reveals one more tile of that word, in order, with a soft amber fill (hint 1 shows the first letter, hint 2 the first two). The target stays until it is found; then the next hint picks a new target. A 4-letter target can be fully revealed by four hints; the hint button then stays disabled ("Pirmiausia raskite atskleistą žodį") until that word is found. Count hints used for the results screen.
+
+**Definition hint** — _(decided)_ 2 per puzzle (#83), a book button with a badge of uses left, next to Hint. Each use shows, in a card under the board, the definition and letter count of an unfound required word, never the word ("Apibrėžimas (7 raidės): …"). The word is one not shown yet, chosen with a seed of the puzzle id and the uses so far, so every player sees the same; it is independent of the hint target. A card goes when its word is found; the use is not given back. No time penalty. The results screen and the share text count the uses when there were any.
 
 **Rotate** — rotates the board 90° clockwise with a short animation. It is purely visual: logic indices stay the same, letters stay upright. Remember the rotation per puzzle.
 
@@ -242,7 +244,7 @@ One puzzle per calendar day in the player's local time zone; all progress lives 
 
 **Saving** (keys versioned for future migrations):
 
-- `zt:v1:progress:<date>` — found words with the time each was found, extras, hints used, hint target, elapsed time, rotation, status, _(decided)_ and the local date the puzzle was started. Saved after every change, restored on reload.
+- `zt:v1:progress:<date>` — found words with the time each was found, extras, hints used, hint target, definitions shown (_(decided)_ #83; old saves default to none), elapsed time, rotation, status, _(decided)_ and the local date the puzzle was started. Saved after every change, restored on reload.
 - `zt:v1:settings` — dark mode, show timer, feedback messages, tutorial done, extra-word dialog seen.
 - `zt:v1:stats` — played, solves, current streak, best streak, last daily solve date.
 
@@ -324,5 +326,6 @@ Settled in the grilling session on 2026-11-05:
 | D10 | Final name (decided 2026-11-07): "Žodžių tiltai", sentence case; the `zt:v1:` storage prefix stays; no custom domain yet (default GitHub Pages address).                                                 |
 | D11 | One branch + PR per ticket; CI must pass; the agent merges.                                                                                                                                              |
 | D12 | All five milestones are ticketed up front.                                                                                                                                                               |
+| D15 | Definition hint (decided 2026-11-12, #83): two per puzzle; shows an unfound word's definition and letter count, never the word; counted on results and share when used.                                  |
 | D13 | Found-word feedback (decided 2026-11-08, #73): the traced path holds green (yellow for an extra word, #75) and pops for about 1 s; freed tiles fall away after it; reduced motion only holds the colour. |
 | D14 | Hints per puzzle raised from 3 to 5 (decided 2026-11-12, #82); a fully revealed target disables the hint button until it is found.                                                                       |

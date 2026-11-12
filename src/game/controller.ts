@@ -4,6 +4,7 @@ import {
   newGame,
   revealedTiles,
   rotate,
+  useDefinitionHint,
   useHint,
   setElapsed,
   spell,
@@ -146,6 +147,17 @@ export class GameController {
   hint(): void {
     if (!this.playing) return;
     const next = useHint(this.puzzle, this.state);
+    if (next === this.state) return;
+    this.endFound();
+    this.state = next;
+    this.render();
+    this.options.onChange?.(this.state, null);
+  }
+
+  /** Shows one more unfound word's definition, if any uses are left (spec §5 Definition hint). */
+  definitionHint(): void {
+    if (!this.playing) return;
+    const next = useDefinitionHint(this.puzzle, this.state);
     if (next === this.state) return;
     this.endFound();
     this.state = next;

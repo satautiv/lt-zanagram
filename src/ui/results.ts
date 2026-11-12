@@ -63,6 +63,10 @@ export function renderResults(
 
   const chips = node('div', 'chips');
   chips.append(node('span', 'chip', t('count.hints', { n: state.hintsUsed })));
+  const definitionsUsed = state.definitionsShown.length;
+  if (definitionsUsed > 0) {
+    chips.append(node('span', 'chip', t('count.definitions', { n: definitionsUsed })));
+  }
 
   const words = node('section', 'results-words');
   words.append(node('h3', 'results-heading', t('results.todaysWords')));
