@@ -7,6 +7,7 @@ export * from './puzzle';
 export * from './game';
 export * from './typing';
 export * from './hint';
+export * from './definition-hint';
 export * from './obfuscate';
 export * from './words';
 export * from './clock';

@@ -23,6 +23,11 @@ function seededRandom(seed: number): number {
   return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 }
 
+/** One item picked by a seed string, the same for every player (spec §5 Hint tie-breaks). */
+export function seededChoice<T>(items: readonly T[], seed: string): T {
+  return items[Math.floor(seededRandom(hash(seed)) * items.length)]!;
+}
+
 export function hintsLeft(state: GameState): number {
   return Math.max(0, MAX_HINTS - state.hintsUsed);
 }
@@ -53,8 +58,7 @@ export function pickHintTarget(puzzle: Puzzle, state: GameState): string | null 
   if (unfound.length === 0) return null;
   const shortest = Math.min(...unfound.map((w) => w.path.length));
   const ties = unfound.filter((w) => w.path.length === shortest);
-  const index = Math.floor(seededRandom(hash(`${puzzle.id}:${state.hintsUsed}`)) * ties.length);
-  return ties[index]!.word;
+  return seededChoice(ties, `${puzzle.id}:${state.hintsUsed}`).word;
 }
 
 /**

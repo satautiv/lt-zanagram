@@ -24,6 +24,8 @@ export interface GameState {
   hintTarget: string | null;
   /** How many tiles of the hint target are revealed. */
   hintRevealed: number;
+  /** Words whose definitions definition hints have shown, in order; uses = length (#83). */
+  definitionsShown: string[];
   /** Raw elapsed play time; the adjusted time subtracts the extra-word bonuses. */
   elapsedMs: number;
   /** Quarter turns clockwise, 0–3. Purely visual; remembered per puzzle (spec §5 Rotate). */
@@ -57,6 +59,7 @@ export function newGame(puzzle: Puzzle): GameState {
     hintsUsed: 0,
     hintTarget: null,
     hintRevealed: 0,
+    definitionsShown: [],
     elapsedMs: 0,
     rotation: 0,
     status: 'playing',

@@ -29,6 +29,13 @@ describe('shareText', () => {
     expect(none).toContain('0 patarimų, 0 papildomų žodžių');
   });
 
+  it('counts definition hints only when used (#83)', () => {
+    const used = shareText(puzzle, finished({ hintsUsed: 1, definitionsShown: ['A', 'B'] }), url);
+    expect(used).toContain(': 00:00, 1 patarimas, 2 apibrėžimai, 0 papildomų žodžių');
+    const unused = shareText(puzzle, finished({ hintsUsed: 1 }), url);
+    expect(unused).not.toContain('apibrėžim');
+  });
+
   it('says the puzzle was given up instead of giving a time', () => {
     const state = finished({ status: 'gaveUp', elapsedMs: 60_000, hintsUsed: 3 });
     expect(shareText(puzzle, state, url)).toBe(

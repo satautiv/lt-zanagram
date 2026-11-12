@@ -47,7 +47,7 @@ A path the player commits, before it has been judged as a required word, an extr
 _Avoid_: Guess, attempt, answer
 
 **Definition**:
-A short original Lithuanian explanation of a required word, shown after the puzzle ends.
+A short original Lithuanian explanation of a required word, shown after the puzzle ends, or during play through a definition hint.
 _Avoid_: Clue, meaning, description
 
 ## Play
@@ -59,6 +59,10 @@ _Avoid_: Clue, tip
 **Hint target**:
 The unfound required word that hints are currently revealing, kept until it is found.
 _Avoid_: Hint word
+
+**Definition hint**:
+One look at the definition (and letter count) of an unfound required word, without the word; a player gets two per puzzle.
+_Avoid_: Clue, definition help
 
 **Solved**:
 The state of a puzzle once every required word has been found.

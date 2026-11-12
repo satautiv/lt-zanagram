@@ -34,6 +34,7 @@ import { PauseMenu } from './ui/pause-menu';
 import { renderResults } from './ui/results';
 import { SettingsPanel } from './ui/settings-panel';
 import { Toolbar } from './ui/toolbar';
+import { DefinitionCards } from './ui/definition-cards';
 import { Tutorial } from './ui/tutorial';
 import { t } from './i18n';
 import { registerServiceWorker } from './pwa';
@@ -85,6 +86,7 @@ function startGame(puzzle: Puzzle, published: readonly string[]): void {
   const timer = new Timer(initial.elapsedMs);
   const status = new StatusLine();
   const board = new BoardView(puzzle);
+  const definitionCards = new DefinitionCards();
   const play = document.createElement('div');
   play.className = 'play';
 
@@ -128,6 +130,7 @@ function startGame(puzzle: Puzzle, published: readonly string[]): void {
   const toolbar = new Toolbar({
     onMenu: () => menu.open(),
     onHint: () => game.hint(),
+    onDefinitionHint: () => game.definitionHint(),
     onRotate: () => game.rotate(),
     onRemoveAds: ads.enabled ? () => ads.removeAds() : undefined,
   });
@@ -160,6 +163,7 @@ function startGame(puzzle: Puzzle, published: readonly string[]): void {
       onChange: (state, result) => {
         save();
         toolbar.update(puzzle, state);
+        definitionCards.update(puzzle, state);
         if (result?.kind === 'extra' && !settings.extraDialogSeen) {
           changeSettings({ extraDialogSeen: true });
           timer.pause('help');
@@ -203,8 +207,9 @@ function startGame(puzzle: Puzzle, published: readonly string[]): void {
   showTime();
 
   toolbar.update(puzzle, game.state);
+  definitionCards.update(puzzle, game.state);
   toolbar.setTimerVisible(settings.showTimer);
-  play.append(status.element, board.svg);
+  play.append(status.element, board.svg, definitionCards.element);
   // Banner slot below the board, never over it (spec §10); null while ads are off.
   const banner = ads.bannerSlot();
   if (banner) play.append(banner);
